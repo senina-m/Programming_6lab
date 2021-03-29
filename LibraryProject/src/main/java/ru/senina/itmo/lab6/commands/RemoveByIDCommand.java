@@ -1,17 +1,22 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 
 /**
  * Command removes element from collection by it's ID
  */
-public class RemoveByIDCommand extends Command {
-    private final CollectionKeepers collectionKeeper;
+@CommandAnnotation(name = "remove_by_id", collectionKeeper = true, id = true)
+public class RemoveByIDCommand<T extends CollectionElement> extends Command<T> {
+    private ICollectionKeeper<T> collectionKeeper;
     private long id;
 
-    public RemoveByIDCommand(CollectionKeepers collectionKeeper) {
+    public RemoveByIDCommand() {
         super("remove_by_id id", "remove an item from the collection by its id");
+    }
+
+    public void setArgs(ICollectionKeeper<T> collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

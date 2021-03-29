@@ -13,5 +13,11 @@ targetCompatibility = 1.8
 sourceCompatibility = 1.8
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'org.testng:testng:7.1.0'
+    implementation 'org.jetbrains:annotations:19.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+    implementation 'com.jwebmp.jackson.datatype:jackson-datatype-jsr310:0.63.0.19'
+    implementation 'junit:junit:4.13.1'
 }

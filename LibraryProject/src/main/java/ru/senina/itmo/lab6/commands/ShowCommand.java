@@ -1,20 +1,28 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
-import ru.senina.itmo.lab6.Parser;
-import ru.senina.itmo.lab6.ParsingException;
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.parser.Parser;
+import ru.senina.itmo.lab6.parser.ParsingException;
 
 /**
  * Command shows all collection elements
  */
-public class ShowCommand extends CommandWithoutArgs {
+@CommandAnnotation(name = "show", collectionKeeper = true, parser = true)
+public class ShowCommand<T extends CollectionElement> extends CommandWithoutArgs<T> {
 
-    private final CollectionKeepers collectionKeeper;
-    private final Parser parser;
+    private ICollectionKeeper<T> collectionKeeper;
+    private Parser<T> parser;
 
-    public ShowCommand(CollectionKeepers collectionKeeper, Parser parser) {
+    public ShowCommand() {
         super("show", "print to standard output all elements of the collection in string representation");
-        this.collectionKeeper =  collectionKeeper;
+    }
+
+    public void setArgs(ICollectionKeeper<T> collectionKeeper) {
+        this.collectionKeeper = collectionKeeper;
+    }
+
+    public void setArgs(Parser<T> parser) {
         this.parser = parser;
     }
 

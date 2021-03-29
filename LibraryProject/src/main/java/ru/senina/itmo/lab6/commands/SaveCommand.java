@@ -1,28 +1,35 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
-import ru.senina.itmo.lab6.Parser;
-
-import java.io.IOException;
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.labwork.LabWork;
+import ru.senina.itmo.lab6.parser.Parser;
 
 /**
  * Command saves collection to file
  */
-public class SaveCommand extends CommandWithoutArgs {
-    private final CollectionKeepers collectionKeeper;
-    private final Parser parser;
+@CommandAnnotation(name = "save", collectionKeeper = true, parser = true, filename = true)
+public class SaveCommand<T extends CollectionElement> extends CommandWithoutArgs<T> {
+    private ICollectionKeeper<T> collectionKeeper;
+    private Parser<T> parser;
     private final String filename;
 
-    public SaveCommand(CollectionKeepers collectionKeeper, Parser parser, String filename) {
+    public SaveCommand(String filename) {
         super("save", "save collection to file");
-        this.collectionKeeper = collectionKeeper;
-        this.parser = parser;
         this.filename = filename;
     }
 
+    public void setArgs(ICollectionKeeper<T> collectionKeeper) {
+        this.collectionKeeper = collectionKeeper;
+    }
+
+    public void setArgs(Parser<T> parser) {
+        this.parser = parser;
+    }
+
     @Override
-    protected String doRun(){
-        parser.writeStringToFile(filename, parser.fromCollectionKeeperToString(collectionKeeper));
+    protected String doRun() {
+        parser.writeStringToFile(filename, parser.fromObjectToString(collectionKeeper));
         return "Collection was successfully saved to " + filename + " file.";
     }
 }

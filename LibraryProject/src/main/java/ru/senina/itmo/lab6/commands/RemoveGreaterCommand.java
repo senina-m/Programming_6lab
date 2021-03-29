@@ -1,17 +1,21 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
-import ru.senina.itmo.lab6.labwork.LabWork;
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
 
 /**
  * Command removes all elements greater than given
  */
-public class RemoveGreaterCommand extends CommandWithoutArgs implements ElementNeed{
-    private final CollectionKeepers collectionKeeper;
-    private LabWork element;
+@CommandAnnotation(name = "remove_greater", element = true, collectionKeeper = true)
+public class RemoveGreaterCommand<T extends CollectionElement> extends CommandWithoutArgs<T>{
+    private ICollectionKeeper<T> collectionKeeper;
+    private T element;
 
-    public RemoveGreaterCommand( CollectionKeepers collectionKeeper) {
+    public RemoveGreaterCommand() {
         super("remove_greater {element}", "remove all items from the collection that are greater than the specified one");
+    }
+
+    public void setArgs(ICollectionKeeper<T> collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -21,7 +25,8 @@ public class RemoveGreaterCommand extends CommandWithoutArgs implements ElementN
     }
 
     @Override
-    public void setLabWorkElement(LabWork labWorkElement) {
-        this.element = labWorkElement;
+    public void setArgs(String[] args, T element){
+        setArgs(args);
+        this.element = element;
     }
 }

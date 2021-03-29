@@ -1,9 +1,9 @@
-package ru.senina.itmo.lab6.labwork;
+package ru.senina.itmo.lab6;
 
 import java.util.Objects;
 
 //TODO: Надо обязать элементы коллекции поддерживать парсинг
-public abstract class ElementOfCollection {
+public abstract class CollectionElement {
     private final java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
     //Поле не может быть null, Значение этого поля должно генерироваться автоматически https://javadevblog.com/polnoe-rukovodstvo-po-java-8-date-time-api-primery-localdate-instant-localdatetime-parse-i-format.html
     private Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,

@@ -1,4 +1,4 @@
-package ru.senina.itmo.lab6;
+package ru.senina.itmo.lab6.parser;
 
 public class ParsingException extends RuntimeException {
     ParsingException(String message){

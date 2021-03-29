@@ -1,19 +1,23 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
-import ru.senina.itmo.lab6.labwork.LabWork;
 
 /**
  * Command updates the element with given ID in collection
  */
-public class UpdateCommand extends Command implements ElementNeed {
-    final CollectionKeepers collectionKeeper;
-    private LabWork element;
+@CommandAnnotation(name = "update", element = true, collectionKeeper = true, id = true)
+public class UpdateCommand<T extends CollectionElement> extends Command<T>{
+    private ICollectionKeeper<T> collectionKeeper;
+    private T element;
     private long id;
 
-    public UpdateCommand(CollectionKeepers collectionKeeper) {
+    public UpdateCommand() {
         super("update id {element}", "update the value of the collection element whose id is equal to the given");
+    }
+
+    public void setArgs(ICollectionKeeper<T> collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -38,7 +42,8 @@ public class UpdateCommand extends Command implements ElementNeed {
     }
 
     @Override
-    public void setLabWorkElement(LabWork labWorkElement) {
-        this.element = labWorkElement;
+    public void setArgs(String[] args, T element){
+        setArgs(args);
+        this.element = element;
     }
 }

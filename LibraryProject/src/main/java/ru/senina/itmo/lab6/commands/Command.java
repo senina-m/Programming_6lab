@@ -1,12 +1,26 @@
 package ru.senina.itmo.lab6.commands;
 
+import ru.senina.itmo.lab6.CollectionElement;
+import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.parser.Parser;
+
 /**
  * Parent of all ru.senina.itmo.lab6.commands classes
  */
-public abstract class Command {
+//TODO: Не добавить ли метод "очистить команду"
+public abstract class Command <T extends CollectionElement>{
     private String[] args;
     private final String name;
     private final String description;
+    private int number;
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
     protected Command(String name, String description) {
         this.name = name;
@@ -44,4 +58,10 @@ public abstract class Command {
     public String getDescription() {
         return description;
     }
+
+    public void setArgs(String[] args, T element){}
+
+    public void setArgs(ICollectionKeeper<T> collectionKeeper){}
+
+    public void setArgs(Parser<T> parser){}
 }

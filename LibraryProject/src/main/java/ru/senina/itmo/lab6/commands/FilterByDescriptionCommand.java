@@ -1,37 +1,45 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionKeepers;
+import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
-import ru.senina.itmo.lab6.Parser;
-import ru.senina.itmo.lab6.ParsingException;
-import ru.senina.itmo.lab6.labwork.ElementOfCollection;
-import ru.senina.itmo.lab6.labwork.LabWork;
+import ru.senina.itmo.lab6.parser.Parser;
+import ru.senina.itmo.lab6.parser.ParsingException;
+import ru.senina.itmo.lab6.CollectionElement;
 
 import java.util.List;
 
 /**
  * Command to find all elements in collection with given description
  */
-public class FilterByDescriptionCommand extends Command {
-    private final CollectionKeepers collectionKeeper;
+@CommandAnnotation(name = "filter_by_description", collectionKeeper = true, parser = true)
+public class FilterByDescriptionCommand<T extends CollectionElement> extends Command<T> {
+    private ICollectionKeeper<T> collectionKeeper;
     private String description;
-    private final Parser parser;
+    private Parser<T> parser;
 
-    public FilterByDescriptionCommand(CollectionKeepers collectionKeeper, Parser parser) {
+    public FilterByDescriptionCommand() {
         super("filter_by_description description", "display elements whose description field value is equal to the given one");
+    }
+
+    @Override
+    public void setArgs(ICollectionKeeper<T> collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
+    }
+
+    @Override
+    public void setArgs(Parser<T> parser) {
         this.parser = parser;
     }
 
     @Override
     protected String doRun() {
         try {
-            List<? extends ElementOfCollection> resultElements = collectionKeeper.filterByDescription(description);
+            List<T> resultElements = collectionKeeper.filterByDescription(description);
             if(resultElements.size() != 0){
                 StringBuilder result = new StringBuilder();
                 result.append("You entered a command filter_by_description. These are the elements with description \"").append(description).append("\":\n");
                 for(int i = 0; i < resultElements.size(); i++){
-                    result.append("Element ").append(i + 1).append(": \n").append(parser.fromElementToString(resultElements.get(i))).append("\n");
+                    result.append("Element ").append(i + 1).append(": \n").append(parser.fromObjectToString(resultElements.get(i))).append("\n");
                 }
                 return result.toString();
             }else{
@@ -47,7 +55,6 @@ public class FilterByDescriptionCommand extends Command {
         String[] args = getArgs();
         if(args.length >= 2){
             StringBuilder description = new StringBuilder();
-            description.append("");
             for(int i = 1; i < args.length; i++){
                 description.append(args[i]);
                 if(i != args.length - 1){

@@ -11,7 +11,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CommandAnnotation {
-    String commandDescription();
-    String commandName();
-    boolean showInHelp() default true;
+    String name();
+
+    boolean element() default false;
+
+    boolean id() default false;
+
+    boolean index() default false;
+
+    boolean description() default false;
+
+    boolean filename() default false;
+
+    boolean collectionKeeper() default false;
+
+    boolean parser() default false;
 }

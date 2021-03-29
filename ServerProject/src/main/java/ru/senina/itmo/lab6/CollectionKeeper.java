@@ -2,16 +2,16 @@ package ru.senina.itmo.lab6;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.senina.itmo.lab6.labwork.Discipline;
-import ru.senina.itmo.lab6.labwork.ElementOfCollection;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class to keep collection's elements
  */
-public class CollectionKeeper implements CollectionKeepers{
+public class CollectionKeeper implements ICollectionKeeper<LabWork> {
 
     @JsonIgnore
     private final Date time = new Date();
@@ -47,18 +47,16 @@ public class CollectionKeeper implements CollectionKeepers{
 
     //TODO: think what to do with that
     @Override
-    public void setList(Collection<? extends ElementOfCollection> list) throws IllegalArgumentException{
-        if(list instanceof LabWork) {
-            this.list = new LinkedList(list);
-        }else{
-            throw new IllegalArgumentException("This elements aren't labWork!");
-        }
+    public void setList(Collection<LabWork> list) throws IllegalArgumentException {
+        this.list.clear();
+        this.list.addAll(list);
     }
 
     @JsonIgnore
-    public String getType(){
+    public String getType() {
         return "LinkedList";
     }
+
 
     @JsonIgnore
     public int getAmountOfElements() {
@@ -73,49 +71,43 @@ public class CollectionKeeper implements CollectionKeepers{
 
     /**
      * Update element with given ID
-     * @param id given ID
+     *
+     * @param id      given ID
      * @param element element update value
      * @return String result of method work. If it finished successful
      */
-    //TODO: think about this cast to LabWork element. Originally I thought that this class works only with LabWork elements list
-    public String updateID(long id, ElementOfCollection element){
-        if(element instanceof LabWork){
-            for(int i=0; i < list.size(); i++){
-                if(list.get(i).getId() == id){
-                    list.set(i, (LabWork)element);
-                    return "Element with id: " + id + " was successfully updated.";
-                }
+    public String updateID(long id, LabWork element) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId() == id) {
+                list.set(i, (LabWork) element);
+                return "Element with id: " + id + " was successfully updated.";
             }
-            return "There is no element with id: " + id + " in collection.";
-        }else {
-            return "This elements aren't labWork and don't cast to collection.";
         }
+        return "There is no element with id: " + id + " in collection.";
     }
 
     /**
      * Add element to collection
+     *
      * @param element element to add
      * @return String result of method work. If it finished successful
      */
     @Override
-    public String add(ElementOfCollection element) {
-        if(element instanceof LabWork) {
-            list.add((LabWork) element);
-            return "Element with id: " + element.getId() + " was successfully added.";
-        }else{
-            return "Given element doesn't cast to collection.";
-        }
+    public String add(LabWork element) {
+        list.add(element);
+        return "Element with id: " + element.getId() + " was successfully added.";
     }
 
     /**
      * Remove element with given id
+     *
      * @param id given id
      * @return String result of method work. If it finished successful
      */
     @Override
     public String removeById(long id) {
-        for(int i=0; i < list.size(); i++){
-            if(list.get(i).getId() == id){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId() == id) {
                 list.remove(i);
                 return "Element with id: " + id + " was successfully removed.";
             }
@@ -125,6 +117,7 @@ public class CollectionKeeper implements CollectionKeepers{
 
     /**
      * Clear collection
+     *
      * @return String result of method work. If it finished successful
      */
     public String clear() {
@@ -134,6 +127,7 @@ public class CollectionKeeper implements CollectionKeepers{
 
     /**
      * Remove element with given index
+     *
      * @param index given index
      * @return String result of method work. If it finished successful
      */
@@ -142,13 +136,14 @@ public class CollectionKeeper implements CollectionKeepers{
         try {
             long id = list.remove(index).getId();
             return "Element with index " + index + " and id " + id + " was successfully removed.";
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             return "Removing an element with index " + index + " was failed. No such index in the collection.";
         }
     }
 
     /**
      * Sort collection
+     *
      * @return String result of method work. If it finished successful
      */
     public String sort() {
@@ -158,33 +153,31 @@ public class CollectionKeeper implements CollectionKeepers{
 
     /**
      * Remove element with grater value of SelfStudyHours of given element
+     *
      * @param element given element
      * @return String result of method work. If it finished successful
      */
     @Override
-    public String removeGreater(ElementOfCollection element) {
-        if(element instanceof LabWork) {
-            List<Integer> indexToDelete = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                if (comparator.compare(list.get(i), (LabWork) element) > 0) {
-                    indexToDelete.add(i);
-                }
+    public String removeGreater(LabWork element) {
+        List<Integer> indexToDelete = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (comparator.compare(list.get(i), element) > 0) {
+                indexToDelete.add(i);
             }
-            for (int i = indexToDelete.size() - 1; i >= 0; i--) {
-                list.remove((int) indexToDelete.get(i));
-            }
-            return "All elements greater then entered were successfully removed.";
-        }else {
-            return "The entered Element isn't labWork and couldn't be contrasted with it's elements.";
         }
+        for (int i = indexToDelete.size() - 1; i >= 0; i--) {
+            list.remove((int) indexToDelete.get(i));
+        }
+        return "All elements greater then entered were successfully removed.";
     }
 
     /**
      * Sort by difficulty of subject
-     * @return String result of method work. If it finished successful
+     *
+     * @return The minimal element by it difficulty
      * @throws IndexOutOfBoundsException if no elements in collection
      */
-    public LabWork minByDifficulty() throws IndexOutOfBoundsException{
+    public LabWork minByDifficulty() throws IndexOutOfBoundsException {
         try {
             LabWork element = list.get(0);
             for (LabWork labWork : list) {
@@ -193,37 +186,31 @@ public class CollectionKeeper implements CollectionKeepers{
                 }
             }
             return element;
-        }catch (IndexOutOfBoundsException e){
-            // TODO: Не кидать эту ошибку наверх?
+        } catch (IndexOutOfBoundsException e) {
+            // TODO: переписать под стримы?
             throw new InvalidArgumentsException("No elements in collection. Can't choose the less by Difficulty.");
         }
     }
 
     /**
      * Filter by given description
+     *
      * @param description given description
      * @return String result of method work. If it finished successful
      */
     @Override
-    public List<? extends ElementOfCollection> filterByDescription(String description) {
-        List<LabWork> filteredElements = new ArrayList<>();
-        for(LabWork element : list){
-            if(element.getDescription().equals(description)){
-                filteredElements.add(element);
-            }
-        }
-        return filteredElements;
+    public List<LabWork> filterByDescription(String description) {
+        return list.stream().filter(e -> e.getDescription().equals(description)).collect(Collectors.toList());
     }
 
     /**
      * Method to sort the list of elements
+     *
      * @return sorted list of LabWork objects
      */
     @Override
     public List<LabWork> getSortedList() {
-        List<LabWork> newList = this.list;
-        newList.sort(comparator);
-        return newList;
+        return list.stream().sorted(comparator).collect(Collectors.toList());
     }
 
     /**
