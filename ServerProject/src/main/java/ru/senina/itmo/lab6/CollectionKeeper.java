@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 /**
  * Class to keep collection's elements
  */
-public class CollectionKeeper implements ICollectionKeeper<LabWork> {
+public class CollectionKeeper extends ICollectionKeeper{
 
     @JsonIgnore
     private final Date time = new Date();
     @JsonIgnore
     private final Comparator comparator = new Comparator();
-    private LinkedList<LabWork> list;
+    private final LinkedList<LabWork> list;
 
     @Override
     public void setTime(Date time) {
@@ -47,7 +47,7 @@ public class CollectionKeeper implements ICollectionKeeper<LabWork> {
 
     //TODO: think what to do with that
     @Override
-    public void setList(Collection<LabWork> list) throws IllegalArgumentException {
+    public void setList(LinkedList<LabWork> list) throws IllegalArgumentException {
         this.list.clear();
         this.list.addAll(list);
     }

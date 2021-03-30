@@ -7,10 +7,13 @@ import ru.senina.itmo.lab6.labwork.Difficulty;
 import ru.senina.itmo.lab6.labwork.Discipline;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Scanner;
 
 
-public class TerminalKeeper<T extends CollectionElement> {
+public class TerminalKeeper {
     private boolean systemInIsClosed = false;
     private Scanner in = new Scanner(System.in);
 
@@ -31,7 +34,7 @@ public class TerminalKeeper<T extends CollectionElement> {
                         if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
                             CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
                             if (annotation.element()) {
-                                T element = readElement();
+                                LabWork element = readElement();
                                 command.setArgs(line, element);
                             }
                         } else {
@@ -67,12 +70,10 @@ public class TerminalKeeper<T extends CollectionElement> {
         return result.toArray(resultStr);
     }
 
-    //TODO: Можно ли читать разные типы элементов. Наверное нельзя - мы работаем с одной коллекцией, но можно будет выбрать с какой запускаться.
-
     /**
      * @return NULLABLE
      */
-    private T readElement() {
+    private LabWork readElement() {
         while (true) {
             try {
                 LabWork element = new LabWork();
@@ -112,7 +113,7 @@ public class TerminalKeeper<T extends CollectionElement> {
                 discipline.setSelfStudyHours(Integer.parseInt(in.nextLine()));
                 element.setDiscipline(discipline);
                 //TODO: Как этого избежать, мне нажло при чтении знать какой элемент. Возможно нужно сделать метод, который возвращает меп {вопрос который задать : куда присвоить}
-                return (T) element;
+                return element;
             } catch (InvalidArgumentsException | NumberFormatException e) {
                 System.out.println("You have entered invalidate value." + e.getMessage() + "\nDo you want to exit from command? (yes/no)");
                 if (in.nextLine().equals("yes")) {

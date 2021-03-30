@@ -1,14 +1,13 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.CollectionElement;
 import ru.senina.itmo.lab6.ICollectionKeeper;
-import ru.senina.itmo.lab6.parser.Parser;
+import ru.senina.itmo.lab6.InvalidArgumentsException;
+import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
 
 @CommandAnnotation(name ="create_collection", collectionKeeper = true, parser = true, filename = true)
-public class CreateCollectionCommand<T extends CollectionElement> extends CommandWithoutArgs<T>{
-    private ICollectionKeeper<T> collectionKeeper;
-    // парсер парсит CollectionKeeper или LinkedList<LabWork>
-    private Parser<T> parser;
+public class CreateCollectionCommand extends CommandWithoutArgs{
+    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeperParser parser;
     private final String filename;
 
     public CreateCollectionCommand(String filename) {
@@ -17,20 +16,24 @@ public class CreateCollectionCommand<T extends CollectionElement> extends Comman
     }
 
     @Override
-    public void setArgs(ICollectionKeeper<T> collectionKeeper) {
+    public void setArgs(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
     @Override
-    public void setArgs(Parser<T> parser) {
+    public void setParser(CollectionKeeperParser parser) {
         this.parser = parser;
     }
 
     @Override
-    protected String doRun() {
+    //TODO:почему при наследовании не отлавливаются ошибки?
+    protected String doRun() throws InvalidArgumentsException {
         String fileContents = parser.fromFileToString(filename);
-        //TODO: fix method: make list of elements from file content
-//        collectionKeeper = parser.fromStringToObject(fileContents);
-        return "Collection was successfully created";
+        collectionKeeper.setList(parser.fromStringToObject(fileContents).getList());
+        if(collectionKeeper.getList() != null) {
+            return "Collection was successfully created";
+        }else {
+           throw new InvalidArgumentsException("File " + filename + " was invalid.");
+        }
     }
 }

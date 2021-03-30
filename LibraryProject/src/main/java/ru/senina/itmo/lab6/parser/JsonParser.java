@@ -12,12 +12,13 @@ import java.text.SimpleDateFormat;
 public class JsonParser<T> extends Parser<T> {
     private static ObjectMapper objectMapper;
     private final Class<T> classT;
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
 
     public JsonParser(ObjectMapper objectMapper, Class<T> classT){
         JsonParser.objectMapper = objectMapper;
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
+        objectMapper.setDateFormat(df);
         this.classT = classT;
     }
 
@@ -28,7 +29,6 @@ public class JsonParser<T> extends Parser<T> {
     @Override
     public String fromObjectToString(T object) throws ParsingException{
         try {
-            objectMapper.setDateFormat(df);
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new ParsingException("Something wrong with object.");

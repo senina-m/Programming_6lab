@@ -1,27 +1,31 @@
 package ru.senina.itmo.lab6;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab6.commands.*;
-import ru.senina.itmo.lab6.labwork.LabWork;
+import ru.senina.itmo.lab6.parser.CommandJsonParser;
+import ru.senina.itmo.lab6.parser.JsonParser;
 
-import java.io.*;
+import java.io.File;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
  */
 public class Keeper {
     private final String filename;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
     //TODO метод чтобы менять после запуска
     private int serverHost = 8181;
-    private TerminalKeeper<LabWork> terminalKeeper;
+    private TerminalKeeper terminalKeeper;
     private int numberOfCommands = 0;
     private int recursionLevel = 0;
     private boolean working = true;
-    //Тут должен быть парсер для команд.
-    // А тут должен быть парсер для ответов
-
+    private final CommandJsonParser commandJsonParser = new CommandJsonParser(objectMapper);
+    private final JsonParser<CommandResponse> responseParser = new JsonParser<CommandResponse>(objectMapper, CommandResponse.class);
 
     /**
      * @param filename the path to file from which we read and to which we write collection data
@@ -66,7 +70,7 @@ public class Keeper {
         commandMap.put("exit", new ExitCommand());
 
         netConnector.startConnection("local host", serverHost);
-        terminalKeeper = new TerminalKeeper<>(commandMap);
+        terminalKeeper = new TerminalKeeper(commandMap);
         while (working) {
             Command command = terminalKeeper.readNextCommand();
             newCommand(command);
@@ -95,10 +99,10 @@ public class Keeper {
                 }
             }else{
                 command.setNumber(numberOfCommands++);
-                String message = parser.fromObjectToString(command);
+                String message = commandJsonParser.fromObjectToString(command);
                 netConnector.sendMessage(message);
                 String response = netConnector.receiveMessage();
-                CommandResponse commandAnswer = parser.fromSringToOBject(response);
+                CommandResponse commandAnswer = responseParser.fromStringToObject(response);
                 terminalKeeper.printResponse(commandAnswer);
             }
         }

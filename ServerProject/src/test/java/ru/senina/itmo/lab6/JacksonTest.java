@@ -68,10 +68,10 @@ public class JacksonTest {
         LabWork labWork = new LabWork(name, coordinates, minimalPoint, description, averagePoint, difficulty, discipline);
         LinkedList<LabWork> list = new LinkedList<>();
         list.add(labWork);
-        CollectionKeeper expectedCollectionKeeper = new CollectionKeeper(list);
+        ICollectionKeeper expectedCollectionKeeper = new CollectionKeeper(list);
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        CollectionKeeper collectionKeeper = objectMapper.readValue(json, CollectionKeeper.class);
+        ICollectionKeeper collectionKeeper = objectMapper.readValue(json, ICollectionKeeper.class);
         System.out.println(collectionKeeper);
         System.out.println(expectedCollectionKeeper);
 //        assertEquals("Wrong ru.senina.lab5.Person deserialization from json", collectionKeeper, collectionKeeper);
@@ -89,7 +89,7 @@ public class JacksonTest {
         LabWork labWork = new LabWork(name, coordinates, minimalPoint, description, averagePoint, difficulty, discipline);
         LinkedList<LabWork> list = new LinkedList<>();
         list.add(labWork);
-        CollectionKeeper collectionKeeper = new CollectionKeeper(list);
+        ICollectionKeeper collectionKeeper = new CollectionKeeper(list);
         String expectedJson = "{\"time\":\"2021.02.13 AD at 16:35:38 MSK\",\"list\":[{\"id\":1111,\"name\":\"element\",\"coordinates\":{\"x\":2,\"y\":3},\"creationDate\":\"2021-02-13T16:35:38.9858865\"" +
                 ",\"minimalPoint\":80.0,\"description\":\"my lovely Hori\",\"averagePoint\":9,\"difficulty\":\"HOPELESS\",\"discipline\":{\"name\":\"Killing\",\"lectureHours\":35,\"practiceHours\":65,\"selfStudyHours\":26}}]," +
                 "\"type\":\"LinkedList\"}";
