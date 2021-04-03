@@ -1,46 +1,39 @@
 package ru.senina.itmo.lab6;
 
-import ru.senina.itmo.lab6.commands.Command;
-import ru.senina.itmo.lab6.commands.CommandAnnotation;
 import ru.senina.itmo.lab6.labwork.Coordinates;
 import ru.senina.itmo.lab6.labwork.Difficulty;
 import ru.senina.itmo.lab6.labwork.Discipline;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class TerminalKeeper {
     private boolean systemInIsClosed = false;
     private Scanner in = new Scanner(System.in);
+    Map<String, String[]> commands;
 
-    public TerminalKeeper(Map<String, Command> commands) {
+
+    public TerminalKeeper(Map<String, String[]> commands) {
         this.commands = commands;
     }
 
-    Map<String, Command> commands;
-
-    public Command readNextCommand() {
+    public CommandArgs readNextCommand() {
         while (!systemInIsClosed) {
             try {
                 System.out.print("> ");
                 String[] line = cleanLine(in.nextLine().split("[ \t\f]+"));
                 if (line.length > 0) {
                     if (commands.containsKey(line[0])) {
-                        Command command = commands.get(line[0]);
-                        if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
-                            CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                            if (annotation.element()) {
+                        CommandArgs newCommand = new CommandArgs(line[0], line);
+                        String[] arguments = commands.get(line[0]);
+                        for(String argument: arguments){
+                            if ("element".equals(argument)) {
                                 LabWork element = readElement();
-                                command.setArgsWithElement(line, element);
+                                newCommand.setElement(element);
                             }
-                        } else {
-                            command.setArgs(line);
                         }
-                        return command;
+                        return newCommand;
                     } else {
                         System.out.println("There is no such command.");
                     }
@@ -51,12 +44,10 @@ public class TerminalKeeper {
             } catch (NullPointerException e) {
                 System.out.println("You have entered the end of file symbol. Program will be terminate and collection will be saved.");
                 systemInIsClosed = true;
-                commands.get("save").setArgs(new String[]{"save"});
-                return commands.get("save");
+                return new CommandArgs("save", new String[]{"save"});
             }
         }
-        commands.get("exit").setArgs(new String[]{"exit"});
-        return commands.get("exit");
+        return new CommandArgs("exit", new String[]{"exit"});
     }
 
     private String[] cleanLine(String[] line) {
@@ -126,13 +117,13 @@ public class TerminalKeeper {
         }
     }
 
-    public LinkedList<Command> executeScript(String filename) {
+    public LinkedList<CommandArgs> executeScript(String filename) {
         in = new Scanner(filename);
-        LinkedList<Command> commandsQueue = new LinkedList<>();
+        LinkedList<CommandArgs> commandsQueue = new LinkedList<>();
         while (in.hasNext()){
             commandsQueue.add(readNextCommand());
         }
-        //TODO: метод executeFromFile, который будет возвращать список комманд к исполнению
+        in = new Scanner(System.in);
         return commandsQueue;
     }
 

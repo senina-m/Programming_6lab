@@ -1,6 +1,7 @@
 package ru.senina.itmo.lab6.commands;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ru.senina.itmo.lab6.CommandArgs;
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
 import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
@@ -30,8 +31,9 @@ public abstract class Command {
         this.description = description;
     }
 
-    public void setArgs(String[] args) {
-        this.args = args;
+    public void setArgs(CommandArgs args) {
+        this.args = args.getArgs();
+        this.number = args.getNumber();
     }
 
     public String[] getArgs() {
@@ -63,7 +65,7 @@ public abstract class Command {
         return description;
     }
 
-    public void setArgsWithElement(String[] args, LabWork element) {
+    public void setElement(LabWork element) {
     }
 
     public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {

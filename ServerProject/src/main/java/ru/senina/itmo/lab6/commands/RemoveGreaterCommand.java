@@ -24,16 +24,11 @@ public class RemoveGreaterCommand extends CommandWithoutArgs{
         return collectionKeeper.removeGreater(element);
     }
 
-    @Override
-    public void setArgsWithElement(String[] args, LabWork element){
-        setArgs(args);
-        this.element = element;
-    }
-
     public LabWork getElement() {
         return element;
     }
 
+    @Override
     public void setElement(LabWork element) {
         this.element = element;
     }

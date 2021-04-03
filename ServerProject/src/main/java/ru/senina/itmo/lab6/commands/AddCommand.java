@@ -15,6 +15,7 @@ public class AddCommand extends CommandWithoutArgs{
         return element;
     }
 
+    @Override
     public void setElement(LabWork element) {
         this.element = element;
     }
@@ -30,12 +31,6 @@ public class AddCommand extends CommandWithoutArgs{
     @Override
     protected String doRun() {
         return collectionKeeper.add(element);
-    }
-
-    @Override
-    public void setArgsWithElement(String[] args, LabWork element){
-        setArgs(args);
-        this.element = element;
     }
 
 }

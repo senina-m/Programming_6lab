@@ -1,14 +1,40 @@
 package ru.senina.itmo.lab6;
 
 public class CommandResponse {
-    private final int commandNumber;
-    private final String response;
-    private final String commandName;
+    private  int commandNumber;
+    private  String response;
+    private  String commandName;
+    private  int exceptionCode = 0;
+
 
     public CommandResponse(int commandNumber, String commandName, String response) {
         this.commandName = commandName;
         this.commandNumber = commandNumber;
         this.response = response;
+    }
+
+    public void setCommandNumber(int commandNumber) {
+        this.commandNumber = commandNumber;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public String getCommandName() {
+        return commandName;
+    }
+
+    public void setCommandName(String commandName) {
+        this.commandName = commandName;
+    }
+
+    public int getExceptionCode() {
+        return exceptionCode;
+    }
+
+    public void setExceptionCode(int exceptionCode) {
+        this.exceptionCode = exceptionCode;
     }
 
     public String getResponse() {
