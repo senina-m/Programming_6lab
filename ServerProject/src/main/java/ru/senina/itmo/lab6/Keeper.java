@@ -56,7 +56,7 @@ public class Keeper {
                 if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
                     CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
                     if (annotation.collectionKeeper()) {
-                        command.setArgs(collectionKeeper);
+                        command.setCollectionKeeper(collectionKeeper);
                     }
                     if (annotation.parser()) {
                         command.setParser(collectionKeeperParser);

@@ -14,4 +14,8 @@ public class ExecuteScriptCommand extends CommandWithoutArgs{
     public String getFilename() {
         return filename;
     }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

@@ -8,7 +8,15 @@ import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
 public class CreateCollectionCommand extends CommandWithoutArgs{
     private ICollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
-    private final String filename;
+    private String filename;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public CreateCollectionCommand(String filename) {
         super("create_collection", "create collection from elements from given file");
@@ -16,7 +24,7 @@ public class CreateCollectionCommand extends CommandWithoutArgs{
     }
 
     @Override
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

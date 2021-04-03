@@ -11,11 +11,19 @@ public class AddCommand extends CommandWithoutArgs{
     ICollectionKeeper collectionKeeper;
     private LabWork element;
 
+    public LabWork getElement() {
+        return element;
+    }
+
+    public void setElement(LabWork element) {
+        this.element = element;
+    }
+
     public AddCommand() {
         super("add {element}", "add new element to collection");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -25,7 +33,7 @@ public class AddCommand extends CommandWithoutArgs{
     }
 
     @Override
-    public void setArgs(String[] args, LabWork element){
+    public void setArgsWithElement(String[] args, LabWork element){
         setArgs(args);
         this.element = element;
     }

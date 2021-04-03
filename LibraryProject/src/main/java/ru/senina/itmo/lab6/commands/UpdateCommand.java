@@ -17,7 +17,7 @@ public class UpdateCommand extends Command{
         super("update id {element}", "update the value of the collection element whose id is equal to the given");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -42,8 +42,24 @@ public class UpdateCommand extends Command{
     }
 
     @Override
-    public void setArgs(String[] args, LabWork element){
+    public void setArgsWithElement(String[] args, LabWork element){
         setArgs(args);
         this.element = element;
+    }
+
+    public LabWork getElement() {
+        return element;
+    }
+
+    public void setElement(LabWork element) {
+        this.element = element;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

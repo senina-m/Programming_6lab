@@ -23,7 +23,7 @@ public class FilterByDescriptionCommand extends Command {
     }
 
     @Override
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Class to keep collection's elements
  */
-public class CollectionKeeper extends ICollectionKeeper{
+public class CollectionKeeper extends ICollectionKeeper {
 
     @JsonIgnore
     private final Date time = new Date();
@@ -200,7 +200,10 @@ public class CollectionKeeper extends ICollectionKeeper{
      */
     @Override
     public List<LabWork> filterByDescription(String description) {
-        return list.stream().filter(e -> e.getDescription().equals(description)).collect(Collectors.toList());
+        return list.stream()
+                .filter(e -> e.getDescription()
+                        .equals(description))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -210,7 +213,9 @@ public class CollectionKeeper extends ICollectionKeeper{
      */
     @Override
     public List<LabWork> getSortedList() {
-        return list.stream().sorted(comparator).collect(Collectors.toList());
+        return list.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 
     /**

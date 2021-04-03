@@ -14,7 +14,7 @@ public class RemoveAtCommand extends Command{
         super("remove_at index", "remove the element at the given collection position (index)");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -35,5 +35,13 @@ public class RemoveAtCommand extends Command{
         } else {
             throw new InvalidArgumentsException("Update command has to have an argument - index of the element.");
         }
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

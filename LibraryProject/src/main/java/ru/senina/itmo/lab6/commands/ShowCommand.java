@@ -17,7 +17,7 @@ public class ShowCommand extends CommandWithoutArgs{
         super("show", "print to standard output all elements of the collection in string representation");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

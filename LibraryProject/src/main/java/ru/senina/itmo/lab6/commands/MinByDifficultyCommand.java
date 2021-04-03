@@ -21,7 +21,7 @@ public class MinByDifficultyCommand extends CommandWithoutArgs {
         super("min_by_difficulty", "remove any object from the collection with the minimum difficulty value");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

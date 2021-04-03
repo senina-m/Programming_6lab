@@ -15,7 +15,7 @@ public class RemoveByIDCommand extends Command {
         super("remove_by_id id", "remove an item from the collection by its id");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -32,5 +32,13 @@ public class RemoveByIDCommand extends Command {
         }else {
             throw new InvalidArgumentsException("Remove_by_id command has the only argument - id.");
         }
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

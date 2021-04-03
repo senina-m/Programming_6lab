@@ -12,7 +12,7 @@ public class ClearCommand extends CommandWithoutArgs{
         super("clear", "clear collection");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

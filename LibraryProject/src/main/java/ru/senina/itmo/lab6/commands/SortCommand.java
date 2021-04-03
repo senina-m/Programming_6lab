@@ -13,7 +13,7 @@ public class SortCommand extends CommandWithoutArgs {
         super("sort", "sort the collection in natural order");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

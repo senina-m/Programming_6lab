@@ -35,7 +35,7 @@ public class TerminalKeeper {
                             CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
                             if (annotation.element()) {
                                 LabWork element = readElement();
-                                command.setArgs(line, element);
+                                command.setArgsWithElement(line, element);
                             }
                         } else {
                             command.setArgs(line);

@@ -19,7 +19,7 @@ public class PrintDescendingCommand extends CommandWithoutArgs {
     public PrintDescendingCommand() {
         super("print_descending", "display the elements of the collection in descending order");
     }
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

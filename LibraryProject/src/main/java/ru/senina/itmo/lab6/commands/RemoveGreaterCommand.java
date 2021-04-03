@@ -15,7 +15,7 @@ public class RemoveGreaterCommand extends CommandWithoutArgs{
         super("remove_greater {element}", "remove all items from the collection that are greater than the specified one");
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -25,8 +25,16 @@ public class RemoveGreaterCommand extends CommandWithoutArgs{
     }
 
     @Override
-    public void setArgs(String[] args, LabWork element){
+    public void setArgsWithElement(String[] args, LabWork element){
         setArgs(args);
+        this.element = element;
+    }
+
+    public LabWork getElement() {
+        return element;
+    }
+
+    public void setElement(LabWork element) {
         this.element = element;
     }
 }

@@ -14,7 +14,9 @@ public class JsonParser<T> extends Parser<T> {
     private final Class<T> classT;
 
     public JsonParser(ObjectMapper objectMapper, Class<T> classT){
+        //TODO: Fix problem with com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.2
         JsonParser.objectMapper = objectMapper;
+//        objectMapper.findAndRegisterModules();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");

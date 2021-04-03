@@ -10,14 +10,14 @@ import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
 public class SaveCommand extends CommandWithoutArgs {
     private ICollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
-    private final String filename;
+    private String filename;
 
     public SaveCommand(String filename) {
         super("save", "save collection to file");
         this.filename = filename;
     }
 
-    public void setArgs(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -29,5 +29,13 @@ public class SaveCommand extends CommandWithoutArgs {
     protected String doRun() {
         parser.writeStringToFile(filename, parser.fromObjectToString(collectionKeeper));
         return "Collection was successfully saved to " + filename + " file.";
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

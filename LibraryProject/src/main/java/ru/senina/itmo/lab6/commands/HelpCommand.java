@@ -8,7 +8,7 @@ import java.util.Map;
 
 @CommandAnnotation(name = "help")
 public class HelpCommand extends CommandWithoutArgs {
-    private final Map<String, Command> commands;
+    private Map<String, Command> commands;
 
     public HelpCommand(Map<String, Command> commands) {
         super("help", "displays help for available commands");
@@ -23,5 +23,13 @@ public class HelpCommand extends CommandWithoutArgs {
             string.append(command.getName()).append(" : ").append(command.getDescription()).append("\n");
         }
         return string.toString();
+    }
+
+    public Map<String, Command> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(Map<String, Command> commands) {
+        this.commands = commands;
     }
 }
