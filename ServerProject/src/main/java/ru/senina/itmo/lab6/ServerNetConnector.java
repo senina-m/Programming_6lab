@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
 
 //TODO: Обработать ошибки
 public class ServerNetConnector {
@@ -20,6 +21,7 @@ public class ServerNetConnector {
             this.serverPort = port;
             serverSocket = new ServerSocket(serverPort);
             clientSocket = serverSocket.accept();
+            Logging.log(Level.INFO, "Connection was accepted.");
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e){
@@ -47,6 +49,7 @@ public class ServerNetConnector {
             out.close();
             clientSocket.close();
             serverSocket.close();
+            Logging.log(Level.INFO, "Connection was closed.");
         } catch (IOException e){
             //TODO: обработаьь ошибки
         }

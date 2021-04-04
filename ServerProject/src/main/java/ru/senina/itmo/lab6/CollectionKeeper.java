@@ -79,7 +79,7 @@ public class CollectionKeeper extends ICollectionKeeper {
     public String updateID(long id, LabWork element) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId() == id) {
-                list.set(i, (LabWork) element);
+                list.set(i, element);
                 return "Element with id: " + id + " was successfully updated.";
             }
         }

@@ -3,7 +3,6 @@ package ru.senina.itmo.lab6;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab6.commands.*;
-import ru.senina.itmo.lab6.labwork.LabWork;
 import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.JsonParser;
 import ru.senina.itmo.lab6.parser.Parser;
@@ -11,17 +10,20 @@ import ru.senina.itmo.lab6.parser.Parser;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
  */
 public class Keeper {
+    Logger log = Logger.getLogger(Keeper.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String filename = "my_file.json";
     private final ServerNetConnector netConnector = new ServerNetConnector();
     //TODO метод чтобы менять после запуска
     private int serverPort = 8181;
-    private ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<LabWork>());
+    private final ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
     private final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, ICollectionKeeper.class);
     private final Parser<CommandResponse>  responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
     private final Parser<CommandArgs> commandJsonParser = new JsonParser<>(objectMapper, CommandArgs.class);
@@ -33,6 +35,7 @@ public class Keeper {
      * Method to start a new collection and System.in reader
      */
     public void start() {
+        Logging.log(Level.INFO, "Keeper was started.");
 
         //TODO: try_with_resources
         try {
@@ -40,11 +43,13 @@ public class Keeper {
             netConnector.startConnection(serverPort);
             Map<String, Command> commandMap = createCommandMap();
             SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(commandMap));
-            netConnector.sendResponse(new JsonParser<SetOfCommands>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands));
+            netConnector.sendResponse(new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands));
+            Logging.log(Level.INFO, "Initial commands set was sent to client.");
 
             while (true) {
                 String strCommand = netConnector.hasNextCommand();
                 CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
+                Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (command number " + commandArgs.getNumber() +") was read.");
                 Command command = commandMap.get(commandArgs.getCommandName());
                 command.setArgs(commandArgs);
                 if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
@@ -61,12 +66,14 @@ public class Keeper {
                     }
                 }
                 String commandResult = command.run();
+                Logging.log(Level.INFO, "Command " + command.getName() + " (command number " + command.getNumber() +") was executed without errors.");
                 //TODO: Разорвать соединение, если клиент его разорвал и выйти
                 if(netConnector.checkIfConnectionClosed()){
                     netConnector.stopConnection();
                     System.exit(0);
                 }
                 netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
+                Logging.log(Level.INFO, "Response to command " + command.getName() + " (command number " + command.getNumber() +") was sent.");
             }
         } finally {
             netConnector.stopConnection();

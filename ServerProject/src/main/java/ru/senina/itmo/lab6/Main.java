@@ -1,5 +1,7 @@
 package ru.senina.itmo.lab6;
 
+import java.util.logging.Logger;
+
 /**
  * @author Senina Mariya
  * Main class of programm to start app.
