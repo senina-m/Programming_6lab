@@ -1,3 +1,4 @@
+execute_script C:\Users\senin\Desktop\ITMO\Programming\Programming_6lab\ClientPrject\src\main\resources\script.txt
 add
 new
 76

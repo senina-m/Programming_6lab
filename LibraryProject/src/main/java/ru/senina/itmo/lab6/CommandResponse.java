@@ -7,6 +7,9 @@ public class CommandResponse {
     private  int exceptionCode = 0;
 
 
+    public CommandResponse() {
+    }
+
     public CommandResponse(int commandNumber, String commandName, String response) {
         this.commandName = commandName;
         this.commandNumber = commandNumber;

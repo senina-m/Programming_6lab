@@ -2,6 +2,7 @@ package ru.senina.itmo.lab6.labwork;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.Objects;
 //TODO: Change ru.senina.itmo.lab6.InvalidArgumentsException to something else or move it to this module
 public class LabWork {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
     ; //Поле не может быть null, Значение этого поля должно генерироваться автоматически https://javadevblog.com/polnoe-rukovodstvo-po-java-8-date-time-api-primery-localdate-instant-localdatetime-parse-i-format.html
     private Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,

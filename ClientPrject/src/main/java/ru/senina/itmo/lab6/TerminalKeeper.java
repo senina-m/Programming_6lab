@@ -1,21 +1,27 @@
 package ru.senina.itmo.lab6;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab6.labwork.Coordinates;
 import ru.senina.itmo.lab6.labwork.Difficulty;
 import ru.senina.itmo.lab6.labwork.Discipline;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 
 public class TerminalKeeper {
     private boolean systemInIsClosed = false;
     private Scanner in = new Scanner(System.in);
+    private boolean script = false;
     Map<String, String[]> commands;
+    ObjectMapper mapper;
 
 
-    public TerminalKeeper(Map<String, String[]> commands) {
+    public TerminalKeeper(Map<String, String[]> commands, ObjectMapper mapper) {
         this.commands = commands;
+        this.mapper = mapper;
     }
 
     public CommandArgs readNextCommand() {
@@ -27,9 +33,9 @@ public class TerminalKeeper {
                     if (commands.containsKey(line[0])) {
                         CommandArgs newCommand = new CommandArgs(line[0], line);
                         String[] arguments = commands.get(line[0]);
-                        for(String argument: arguments){
+                        for (String argument : arguments) {
                             if ("element".equals(argument)) {
-                                LabWork element = readElement();
+                                LabWork element = Optional.ofNullable(readElement()).orElseThrow(() -> new InvalidArgumentsException("This command will be skipped."));
                                 newCommand.setElement(element);
                             }
                         }
@@ -68,62 +74,95 @@ public class TerminalKeeper {
         while (true) {
             try {
                 LabWork element = new LabWork();
-                System.out.println("You run a command, which needs LabWork element to be entered.");
+                if (!script) {
+                    System.out.println("You run a command, which needs LabWork element to be entered.");
+                }
 
-                System.out.println("Enter element's name.");
+                if (!script) {
+                    System.out.println("Enter element's name.");
+                }
                 element.setName(in.nextLine());
 
-                System.out.println("Enter coordinates. In first line x <= 74. In second y >= -47.");
+                if (!script) {
+                    System.out.println("Enter coordinates. In first line x <= 74. In second y >= -47.");
+                }
                 element.setCoordinates(new Coordinates(Integer.parseInt(in.nextLine()), Long.parseLong(in.nextLine())));
 
-                System.out.println("Enter minimal point.");
+                if (!script) {
+                    System.out.println("Enter minimal point.");
+                }
                 element.setMinimalPoint(Float.parseFloat(in.nextLine()));
 
-                System.out.println("Enter element description.");
+                if (!script) {
+                    System.out.println("Enter element description.");
+                }
                 element.setDescription(in.nextLine());
 
-                System.out.println("Enter average point.");
+                if (!script) {
+                    System.out.println("Enter average point.");
+                }
                 element.setAveragePoint(Integer.parseInt(in.nextLine()));
 
-                System.out.println("Enter one difficulty of following list:");
+                if (!script) {
+                    System.out.println("Enter one difficulty of following list:");
+                }
                 Difficulty[] difficulties = Difficulty.values();
                 for (Difficulty difficulty : difficulties) {
                     System.out.print(difficulty.toString() + "; ");
                 }
 
                 element.setDifficulty(in.nextLine());
-                System.out.println("Enter discipline parametrs:");
+                if (!script) {
+                    System.out.println("Enter discipline parametrs:");
+                }
                 Discipline discipline = new Discipline();
-                System.out.println("Enter discipline name.");
+                if (!script) {
+                    System.out.println("Enter discipline name.");
+                }
                 discipline.setName(in.nextLine());
-                System.out.println("Enter discipline lectureHours.");
+                if (!script) {
+                    System.out.println("Enter discipline lectureHours.");
+                }
                 discipline.setLectureHours(Long.parseLong(in.nextLine()));
-                System.out.println("Enter discipline practiceHours.");
+                if (!script) {
+                    System.out.println("Enter discipline practiceHours.");
+                }
                 discipline.setPracticeHours(Integer.parseInt(in.nextLine()));
-                System.out.println("Enter discipline selfStudyHours.");
+                if (!script) {
+                    System.out.println("Enter discipline selfStudyHours.");
+                }
                 discipline.setSelfStudyHours(Integer.parseInt(in.nextLine()));
                 element.setDiscipline(discipline);
-                //TODO: Как этого избежать, мне нажло при чтении знать какой элемент. Возможно нужно сделать метод, который возвращает меп {вопрос который задать : куда присвоить}
                 return element;
             } catch (InvalidArgumentsException | NumberFormatException e) {
-                System.out.println("You have entered invalidate value." + e.getMessage() + "\nDo you want to exit from command? (yes/no)");
-                if (in.nextLine().equals("yes")) {
-                    System.out.println("You have exit from previous command.");
-                    return null;
+                if (!script) {
+                    System.out.println("You have entered invalidate value." + e.getMessage() + "\nDo you want to exit from command? (yes/no)");
+                    if (in.nextLine().equals("yes")) {
+                        return null;
+                    } else {
+                        System.out.println("Try again.");
+                    }
                 } else {
-                    System.out.println("Try again.");
+                    System.out.println("Script had incorrect command with element argument.");
+                    return null;
                 }
             }
         }
     }
 
-    public LinkedList<CommandArgs> executeScript(String filename) {
-        in = new Scanner(filename);
+    public LinkedList<CommandArgs> executeScript(String filename) throws FileAccessException {
         LinkedList<CommandArgs> commandsQueue = new LinkedList<>();
-        while (in.hasNext()){
-            commandsQueue.add(readNextCommand());
+        try {
+            in = new Scanner(new File(filename));
+            script = true;
+            while (in.hasNext()) {
+                commandsQueue.add(readNextCommand());
+            }
+        } catch (IOException e) {
+            throw new FileAccessException("File for execution doesn't exist or doesn't hav rights to be read.", filename);
         }
         in = new Scanner(System.in);
+        script = false;
         return commandsQueue;
     }
 

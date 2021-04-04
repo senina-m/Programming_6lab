@@ -2,6 +2,7 @@ package ru.senina.itmo.lab6;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.*;
 
 public class Logging {
@@ -14,6 +15,9 @@ public class Logging {
         String logFile = "myLog.txt";
         File f = new File(logFile);
         f.createNewFile(); //Создать такой файл, если его не было - warning потом уберу
+        PrintWriter writer = new PrintWriter(f);
+        writer.print("");
+        writer.close();
         fileHandler = new FileHandler(logFile, true);
         plainText = new SimpleFormatter();
         fileHandler.setFormatter(plainText);

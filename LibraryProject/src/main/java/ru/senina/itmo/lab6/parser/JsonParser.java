@@ -14,9 +14,7 @@ public class JsonParser<T> extends Parser<T> {
     private final Class<T> classT;
 
     public JsonParser(ObjectMapper objectMapper, Class<T> classT){
-        //TODO: Fix problem with com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.2
         JsonParser.objectMapper = objectMapper;
-//        objectMapper.findAndRegisterModules();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
@@ -31,10 +29,9 @@ public class JsonParser<T> extends Parser<T> {
     @Override
     public String fromObjectToString(T object) throws ParsingException{
         try {
-            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new ParsingException("Something wrong with object.");
-            //TODO: обработать ошибку JsonProcessingException она не должна выпасть, подумать, когда это может случиться
+            throw new ParsingException("Something wrong with object while parsing in JsonParser<" + classT.toString() + ">.");
         }
     }
 
@@ -43,7 +40,7 @@ public class JsonParser<T> extends Parser<T> {
         try {
             return objectMapper.readValue(json, classT);
         } catch (ParsingException | JsonProcessingException e) {
-            throw new ParsingException("Something wrong with string.");
+            throw new ParsingException("Something wrong with string while parsing in JsonParser<" + classT.toString() + ">.");
         }
     }
 }

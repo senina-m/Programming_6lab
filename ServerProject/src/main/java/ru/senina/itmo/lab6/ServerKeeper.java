@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
  */
-public class Keeper {
-    Logger log = Logger.getLogger(Keeper.class.getName());
+public class ServerKeeper {
+    Logger log = Logger.getLogger(ServerKeeper.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String filename = "my_file.json";
     private final ServerNetConnector netConnector = new ServerNetConnector();
@@ -25,10 +25,10 @@ public class Keeper {
     private int serverPort = 8181;
     private final ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
     private final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, ICollectionKeeper.class);
-    private final Parser<CommandResponse>  responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
+    private final Parser<CommandResponse> responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
     private final Parser<CommandArgs> commandJsonParser = new JsonParser<>(objectMapper, CommandArgs.class);
 
-    public Keeper() {
+    public ServerKeeper() {
     }
 
     /**
@@ -40,47 +40,55 @@ public class Keeper {
         //TODO: try_with_resources
         try {
             //TODO: проверить что там с файлом
-            netConnector.startConnection(serverPort);
             Map<String, Command> commandMap = createCommandMap();
             SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(commandMap));
-            netConnector.sendResponse(new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands));
-            Logging.log(Level.INFO, "Initial commands set was sent to client.");
+            commandMap.put("create_collection", new CreateCollectionCommand());
+
+            netConnector.startConnection(serverPort);
+            String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
+            netConnector.sendResponse(commandsSetString);
+            Logging.log(Level.INFO, "Initial commands set was sent to client. \n" + commandsSetString);
 
             while (true) {
                 String strCommand = netConnector.hasNextCommand();
-                CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
-                Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (command number " + commandArgs.getNumber() +") was read.");
-                Command command = commandMap.get(commandArgs.getCommandName());
-                command.setArgs(commandArgs);
-                if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
-                    CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                    if (annotation.collectionKeeper()) {
-                        command.setCollectionKeeper(collectionKeeper);
+                if(strCommand != null){
+                    CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
+                    Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
+                    Command command = commandMap.get(commandArgs.getCommandName());
+                    command.setArgs(commandArgs);
+                    if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
+                        CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
+                        if (annotation.collectionKeeper()) {
+                            command.setCollectionKeeper(collectionKeeper);
+                        }
+                        if (annotation.parser()) {
+                            command.setParser(collectionKeeperParser);
+                        }
+                        if (annotation.element()) {
+                            //TODO: Check that element isn't null
+                            command.setElement(commandArgs.getElement());
+                        }
                     }
-                    if (annotation.parser()) {
-                        command.setParser(collectionKeeperParser);
+                    String commandResult = command.run();
+                    Logging.log(Level.INFO, "Command " + command.getName() + " (" + command.getNumber() + ") was executed without errors.");
+                    //TODO: Разорвать соединение, если клиент его разорвал и выйти
+                    if (netConnector.checkIfConnectionClosed()) {
+                        netConnector.stopConnection();
+                        System.exit(0);
                     }
-                    if(annotation.element()){
-                        //TODO: Check that element isn't null
-                        command.setElement(commandArgs.getElement());
-                    }
+                    netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
+                    Logging.log(Level.INFO, "Response to command " + command.getName() + " (" + command.getNumber() + ") was sent.");
                 }
-                String commandResult = command.run();
-                Logging.log(Level.INFO, "Command " + command.getName() + " (command number " + command.getNumber() +") was executed without errors.");
-                //TODO: Разорвать соединение, если клиент его разорвал и выйти
-                if(netConnector.checkIfConnectionClosed()){
-                    netConnector.stopConnection();
-                    System.exit(0);
-                }
-                netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
-                Logging.log(Level.INFO, "Response to command " + command.getName() + " (command number " + command.getNumber() +") was sent.");
             }
+        }catch (Exception e){
+            //TODO: Check other exceptions
+            Logging.log(Level.WARNING, e.toString());
         } finally {
             netConnector.stopConnection();
         }
     }
 
-    private Map<String, Command> createCommandMap(){
+    private Map<String, Command> createCommandMap() {
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("help", new HelpCommand(commandMap));
         commandMap.put("info", new InfoCommand());
@@ -101,13 +109,15 @@ public class Keeper {
         return commandMap;
     }
 
-    private Map<String, String[]> createCommandsArgsMap(Map<String, Command> map){
+    private Map<String, String[]> createCommandsArgsMap(Map<String, Command> map) {
         Map<String, String[]> commandsArgsMap = new HashMap<>();
-        for(Command command : map.values()){
-            if(command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
+        for (Command command : map.values()) {
+            if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
                 CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
                 if (annotation.element()) {
                     commandsArgsMap.put(annotation.name(), new String[]{"element"});
+                } else {
+                    commandsArgsMap.put(annotation.name(), new String[]{""});
                 }
             }
         }

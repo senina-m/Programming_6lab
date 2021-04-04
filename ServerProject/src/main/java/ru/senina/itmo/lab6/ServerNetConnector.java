@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 //TODO: Обработать ошибки
 public class ServerNetConnector {
-    private int serverPort = 5660;
+    private int serverPort = 8181;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;

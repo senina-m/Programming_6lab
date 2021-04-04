@@ -2,25 +2,28 @@ package ru.senina.itmo.lab6.commands;
 
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
+import ru.senina.itmo.lab6.Logging;
 import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.parser.ParsingException;
 
-@CommandAnnotation(name ="create_collection", collectionKeeper = true, parser = true, filename = true)
-public class CreateCollectionCommand extends CommandWithoutArgs{
+import java.util.logging.Level;
+
+@CommandAnnotation(name = "create_collection", collectionKeeper = true, parser = true, filename = true)
+public class CreateCollectionCommand extends Command {
     private ICollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
-    private String filename;
+    private String collectionString;
 
-    public String getFilename() {
-        return filename;
+    public String getCollectionString() {
+        return collectionString;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setCollectionString(String filename) {
+        this.collectionString = filename;
     }
 
-    public CreateCollectionCommand(String filename) {
+    public CreateCollectionCommand() {
         super("create_collection", "create collection from elements from given file");
-        this.filename = filename;
     }
 
     @Override
@@ -36,12 +39,27 @@ public class CreateCollectionCommand extends CommandWithoutArgs{
     @Override
     //TODO:почему при наследовании не отлавливаются ошибки?
     protected String doRun() throws InvalidArgumentsException {
-        String fileContents = parser.fromFileToString(filename);
-        collectionKeeper.setList(parser.fromStringToObject(fileContents).getList());
-        if(collectionKeeper.getList() != null) {
+        try {
+            collectionKeeper.setList(parser.fromStringToObject(collectionString).getList());
+        } catch (ParsingException e) {
+            Logging.log(Level.WARNING, "Collection file was incorrect, collection wasn't updated with start values.");
+            return "File was incorrect, collection will be empty!";
+        }
+        if (collectionKeeper.getList() != null) {
             return "Collection was successfully created";
-        }else {
-           throw new InvalidArgumentsException("File " + filename + " was invalid.");
+        } else {
+            throw new InvalidArgumentsException("File " + collectionString + " was invalid.");
+        }
+
+    }
+
+    @Override
+    public void validateArguments() {
+        String[] args = this.getArgs();
+        if (args.length == 2) {
+            this.collectionString = args[1];
+        } else {
+            throw new InvalidArgumentsException("Create collection command has the only argument - contents of a collection file.");
         }
     }
 }

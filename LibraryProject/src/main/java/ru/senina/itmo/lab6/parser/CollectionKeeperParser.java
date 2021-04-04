@@ -18,7 +18,7 @@ public class CollectionKeeperParser extends JsonParser<ICollectionKeeper> {
             StringBuilder resultString = new StringBuilder();
             LinkedList<LabWork> list = object.getList();
             for (int i = 0; i < list.size(); i++) {
-                resultString.append("\nElement ").append(i + 1).append(":\n").append(CollectionKeeperParser.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(list.get(i)));
+                resultString.append("\nElement ").append(i + 1).append(":\n").append(fromElementToString(list.get(i)));
             }
             return resultString.toString();
         } catch (JsonProcessingException e) {

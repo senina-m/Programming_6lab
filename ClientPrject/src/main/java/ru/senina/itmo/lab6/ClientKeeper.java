@@ -9,12 +9,12 @@ import java.util.LinkedList;
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
  */
-public class Keeper {
+public class ClientKeeper {
     private final String filename;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
     //TODO метод чтобы менять после запуска
-    private int serverHost = 8181;
+    private int serverPort = 8181;
     private TerminalKeeper terminalKeeper;
     private int numberOfCommands = 0;
     private int recursionLevel = 0;
@@ -24,7 +24,7 @@ public class Keeper {
     /**
      * @param filename the path to file from which we read and to which we write collection data
      */
-    public Keeper(String filename) {
+    public ClientKeeper(String filename) {
         this.filename = filename;
     }
 
@@ -39,15 +39,18 @@ public class Keeper {
                 System.out.println("There is no rights for reading file. Change rights and run program again!");
                 System.exit(0);
             }
-            createCollectionCommand = new CommandArgs("create_collection", new String[]{filename});
+            //TODO: парсить чем-то другим
+            createCollectionCommand = new CommandArgs("create_collection", new String[]{"create_collection", responseParser.fromFileToString(filename)});
         } catch (NullPointerException e) {
             System.out.println("File path is wrong. Run program again with correct filename.");
             System.exit(0);
         }
 
-        netConnector.startConnection("local host", serverHost);
-        SetOfCommands commandsMap = new JsonParser<SetOfCommands>(objectMapper, SetOfCommands.class).fromStringToObject(netConnector.receiveMessage());
-        terminalKeeper = new TerminalKeeper(commandsMap.getCommandsWithArgs());
+        netConnector.startConnection("localhost", serverPort);
+        String message = netConnector.receiveMessage();
+        SetOfCommands commandsMap = new JsonParser<SetOfCommands>(objectMapper, SetOfCommands.class).fromStringToObject(message);
+        commandsMap.getCommandsWithArgs().put("execute_script", new String[]{""});
+        terminalKeeper = new TerminalKeeper(commandsMap.getCommandsWithArgs(), objectMapper);
         newCommand(createCollectionCommand);
         
         while (working) {
@@ -66,16 +69,21 @@ public class Keeper {
             case ("execute_script"):
                 if (recursionLevel < 10) {
                     recursionLevel++;
-                    LinkedList<CommandArgs> scriptCommands = terminalKeeper.executeScript(command.getArgs()[1]);
-                    for (CommandArgs c : scriptCommands) {
-                        newCommand(c);
+                    try {
+                        LinkedList<CommandArgs> scriptCommands = terminalKeeper.executeScript(command.getArgs()[1]);
+                        for (CommandArgs c : scriptCommands) {
+                            newCommand(c);
+                        }
+                    }catch (FileAccessException e){
+                        terminalKeeper.printResponse(new CommandResponse(numberOfCommands++, command.getCommandName(), e.getMessage()));
                     }
                 } else {
                     terminalKeeper.printResponse(new CommandResponse(numberOfCommands++, "execute_script",
                             "You have stacked in the recursion! It's not allowed to deep in more then 10 levels. " +
-                                    "\n All script commands wouldn't be executed!"));
+                                    "\n No more recursive scripts would be executed!"));
                     recursionLevel = 0;
                 }
+                break;
             default:
                 command.setNumber(numberOfCommands++);
                 String message = commandArgsJsonParser.fromObjectToString(command);
