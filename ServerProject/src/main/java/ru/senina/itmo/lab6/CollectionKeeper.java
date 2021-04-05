@@ -45,7 +45,6 @@ public class CollectionKeeper extends ICollectionKeeper {
     }
 
 
-    //TODO: think what to do with that
     @Override
     public void setList(LinkedList<LabWork> list) throws IllegalArgumentException {
         this.list.clear();
@@ -60,7 +59,6 @@ public class CollectionKeeper extends ICollectionKeeper {
 
     @JsonIgnore
     public int getAmountOfElements() {
-        //TODO: не должен возвращать null - проверить
         return Optional.of(list.size()).orElse(0);
     }
 
@@ -187,7 +185,6 @@ public class CollectionKeeper extends ICollectionKeeper {
             }
             return element;
         } catch (IndexOutOfBoundsException e) {
-            // TODO: переписать под стримы?
             throw new InvalidArgumentsException("No elements in collection. Can't choose the less by Difficulty.");
         }
     }

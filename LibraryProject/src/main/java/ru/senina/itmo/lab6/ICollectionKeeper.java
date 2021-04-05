@@ -46,11 +46,9 @@ public abstract class ICollectionKeeper {
     /**Sort collection */
     public abstract String sort();
 
-    //TODO: должен ли этот метод тут быть?
     /**Sort by difficulty of subject*/
     public abstract LabWork minByDifficulty();
 
-    //TODO: All elements of collections have to has description? (optional)
     /**Filter by given description*/
     public abstract List<LabWork> filterByDescription(String description);
 

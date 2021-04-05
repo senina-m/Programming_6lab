@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 //TODO: Обработать ошибки
@@ -26,6 +28,7 @@ public class ServerNetConnector {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e){
             //TODO: обработаьь ошибки UnknownHostException
+            throw new RuntimeException(e);
         }
     }
 
@@ -33,13 +36,17 @@ public class ServerNetConnector {
         String line = "";
         try {
             line  = in.readLine();
-        }catch (IOException e){
+        }catch (Exception e){
             //TODO: обработаьь ошибки
+            System.out.println(e.toString());
+            throw new RuntimeException(e);
         }
         return line;
     }
 
     public void sendResponse(String str){
+        byte[] byteMessage = str.getBytes(StandardCharsets.UTF_8);
+        out.println(byteMessage.length);
         out.println(str);
     }
 
@@ -52,6 +59,7 @@ public class ServerNetConnector {
             Logging.log(Level.INFO, "Connection was closed.");
         } catch (IOException e){
             //TODO: обработаьь ошибки
+            throw new RuntimeException(e);
         }
     }
 
