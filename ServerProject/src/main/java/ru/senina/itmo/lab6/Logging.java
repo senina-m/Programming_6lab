@@ -12,9 +12,9 @@ public class Logging {
 
     private Logging() throws IOException {
         logger = Logger.getLogger(Logging.class.getName());
-        String logFile = "myLog.txt";
+        String logFile = "myLogServer.txt";
         File f = new File(logFile);
-        f.createNewFile(); //Создать такой файл, если его не было - warning потом уберу
+        f.createNewFile(); //TODO: Создать такой файл, если его не было - warning потом уберу
         PrintWriter writer = new PrintWriter(f);
         writer.print("");
         writer.close();

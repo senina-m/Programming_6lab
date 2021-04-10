@@ -47,7 +47,7 @@ public class ServerKeeper {
             netConnector.startConnection(serverPort);
             String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
             netConnector.sendResponse(commandsSetString);
-            Logging.log(Level.INFO, "Initial commands set was sent to client. \n" + commandsSetString);
+            Logging.log(Level.INFO, "Initial commands set was sent to client.");
 
             while (true) {
                 String strCommand = netConnector.hasNextCommand();

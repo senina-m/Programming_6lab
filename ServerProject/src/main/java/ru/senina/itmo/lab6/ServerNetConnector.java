@@ -7,12 +7,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 //TODO: Обработать ошибки
 public class ServerNetConnector {
-    private int serverPort = 8181;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
@@ -20,8 +18,7 @@ public class ServerNetConnector {
 
     public void startConnection(int port){
         try {
-            this.serverPort = port;
-            serverSocket = new ServerSocket(serverPort);
+            serverSocket = new ServerSocket(port);
             clientSocket = serverSocket.accept();
             Logging.log(Level.INFO, "Connection was accepted.");
             out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -33,7 +30,7 @@ public class ServerNetConnector {
     }
 
     public String hasNextCommand() {
-        String line = "";
+        String line;
         try {
             line  = in.readLine();
         }catch (Exception e){
@@ -41,13 +38,14 @@ public class ServerNetConnector {
             System.out.println(e.toString());
             throw new RuntimeException(e);
         }
+        Logging.log(Level.INFO, "Received message: " + line);
         return line;
     }
 
     public void sendResponse(String str){
         byte[] byteMessage = str.getBytes(StandardCharsets.UTF_8);
-        out.println(byteMessage.length);
         out.println(str);
+        Logging.log(Level.INFO, "Message length = " + byteMessage.length + " was send. Message:" + str);
     }
 
     public void stopConnection() {

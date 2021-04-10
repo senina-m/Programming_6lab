@@ -13,8 +13,6 @@ public class ClientKeeper {
     private final String filename;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ClientNetConnector netConnector = new ClientNetConnector();
-    //TODO метод чтобы менять после запуска
-    private int serverPort = 8181;
     private TerminalKeeper terminalKeeper;
     private int numberOfCommands = 0;
     private int recursionLevel = 0;
@@ -46,9 +44,11 @@ public class ClientKeeper {
             System.exit(0);
         }
 
+        //TODO метод чтобы менять после запуска
+        int serverPort = 8181;
         netConnector.startConnection("localhost", serverPort);
         String message = netConnector.receiveMessage();
-        SetOfCommands commandsMap = new JsonParser<SetOfCommands>(objectMapper, SetOfCommands.class).fromStringToObject(message);
+        SetOfCommands commandsMap = new JsonParser<>(objectMapper, SetOfCommands.class).fromStringToObject(message);
         commandsMap.getCommandsWithArgs().put("execute_script", new String[]{""});
         terminalKeeper = new TerminalKeeper(commandsMap.getCommandsWithArgs(), objectMapper);
         newCommand(createCollectionCommand);
