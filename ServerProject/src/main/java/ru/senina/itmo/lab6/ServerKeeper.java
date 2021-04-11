@@ -3,21 +3,19 @@ package ru.senina.itmo.lab6;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab6.commands.*;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.JsonParser;
 import ru.senina.itmo.lab6.parser.Parser;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
  */
 public class ServerKeeper {
-    Logger log = Logger.getLogger(ServerKeeper.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ServerNetConnector netConnector = new ServerNetConnector();
     private final ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
@@ -49,8 +47,9 @@ public class ServerKeeper {
             Logging.log(Level.INFO, "Initial commands set was sent to client.");
 
             while (true) {
-                String strCommand = netConnector.hasNextCommand();
-                if(strCommand != null){
+                try {
+                    String strCommand = netConnector.nextCommand(2000);
+                if (strCommand != null) {
                     CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
                     Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
                     Command command = commandMap.get(commandArgs.getCommandName());
@@ -64,27 +63,34 @@ public class ServerKeeper {
                             command.setParser(collectionKeeperParser);
                         }
                         if (annotation.element()) {
-                            //TODO: Check that element isn't null
+                            //TODO: Check that element isn't null (have i do it here?)
                             command.setElement(commandArgs.getElement());
                         }
                     }
                     String commandResult = command.run();
                     Logging.log(Level.INFO, "Command " + command.getName() + " (" + command.getNumber() + ") was executed without errors.");
-                    //TODO: Разорвать соединение, если клиент его разорвал и выйти
+                    //stop connection and wait for new client if this is answering too long or has disconnected
                     if (netConnector.checkIfConnectionClosed()) {
                         netConnector.stopConnection();
-                        System.exit(0);
+                        netConnector.startConnection(serverPort);
+                        continue;
                     }
                     netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
                     Logging.log(Level.INFO, "Response to command " + command.getName() + " (" + command.getNumber() + ") was sent.");
                 }
+                }catch (TimeoutException e){
+                    netConnector.reconnect(serverPort);
+                }
             }
-        }catch (Exception e){
             //TODO: Check other exceptions
-            Logging.log(Level.WARNING, e.toString());
+        } catch (FileAccessException | InvalidArgumentsException e) {
+            netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(-1, e.getClass().getName(), "Server fail. Sorry, service is no more available.")));
+            Logging.log(Level.WARNING, e.getLocalizedMessage());
         } finally {
             netConnector.stopConnection();
         }
+        Logging.log(Level.INFO, "System exit.");
+        System.exit(-1);
     }
 
     private Map<String, Command> createCommandMap() {

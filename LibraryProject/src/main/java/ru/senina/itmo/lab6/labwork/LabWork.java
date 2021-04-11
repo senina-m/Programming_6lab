@@ -11,12 +11,12 @@ import java.util.Objects;
 /**
  * Class an element of collection
  */
-//TODO: Change ru.senina.itmo.lab6.InvalidArgumentsException to something else or move it to this module
+
 public class LabWork {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
-    ; //Поле не может быть null, Значение этого поля должно генерироваться автоматически https://javadevblog.com/polnoe-rukovodstvo-po-java-8-date-time-api-primery-localdate-instant-localdatetime-parse-i-format.html
+    ; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
     // Значение этого поля должно генерироваться автоматически
 

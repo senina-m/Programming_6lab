@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 import ru.senina.itmo.lab6.labwork.LabWork;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class FilterByDescriptionCommand extends Command {
             }else{
                 return "There is now elements with description \"" + description + "\".";
             }
-        }catch (ParsingException | JsonProcessingException e){
+        }catch (ParsingException e){
             return "Parsing in filter_by_description was failed. " + e.getMessage();
         }
     }

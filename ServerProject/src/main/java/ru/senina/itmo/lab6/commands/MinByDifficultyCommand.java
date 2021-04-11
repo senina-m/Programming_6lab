@@ -2,7 +2,8 @@ package ru.senina.itmo.lab6.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.senina.itmo.lab6.ICollectionKeeper;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
+import ru.senina.itmo.lab6.parser.ParsingException;
 
 /**
  * Command class to find the minimum difficult subject in the collection
@@ -31,7 +32,7 @@ public class MinByDifficultyCommand extends CommandWithoutArgs {
             return "The less difficult subject is: \n" + parser.fromElementToString(collectionKeeper.minByDifficulty());
         } catch (IndexOutOfBoundsException e){
             return "Can't do min_by_difficulty command. " + e.getMessage();
-        } catch ( JsonProcessingException e){
+        } catch ( ParsingException e){
             return "Minimal element with such description was incorrect.";
         }
     }

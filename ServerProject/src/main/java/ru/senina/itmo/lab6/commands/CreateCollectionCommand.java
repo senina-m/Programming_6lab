@@ -3,7 +3,7 @@ package ru.senina.itmo.lab6.commands;
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 import ru.senina.itmo.lab6.Logging;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
 import java.util.logging.Level;
@@ -37,7 +37,6 @@ public class CreateCollectionCommand extends Command {
     }
 
     @Override
-    //TODO:почему при наследовании не отлавливаются ошибки?
     protected String doRun() throws InvalidArgumentsException {
         try {
             collectionKeeper.setList(parser.fromStringToObject(collectionString).getList());

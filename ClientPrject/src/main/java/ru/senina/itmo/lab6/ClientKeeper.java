@@ -2,6 +2,8 @@ package ru.senina.itmo.lab6;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.senina.itmo.lab6.parser.JsonParser;
+import ru.senina.itmo.lab6.parser.Parser;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -37,8 +39,7 @@ public class ClientKeeper {
                 System.out.println("There is no rights for reading file. Change rights and run program again!");
                 System.exit(0);
             }
-            //TODO: парсить чем-то другим
-            createCollectionCommand = new CommandArgs("create_collection", new String[]{"create_collection", responseParser.fromFileToString(filename)});
+            createCollectionCommand = new CommandArgs("create_collection", new String[]{"create_collection", Parser.fromFileToString(filename)});
         } catch (NullPointerException e) {
             System.out.println("File path is wrong. Run program again with correct filename.");
             System.exit(0);

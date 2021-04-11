@@ -1,7 +1,7 @@
 package ru.senina.itmo.lab6.commands;
 
 import ru.senina.itmo.lab6.ICollectionKeeper;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
 
 /**
  * Command saves collection to file

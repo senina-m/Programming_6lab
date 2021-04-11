@@ -1,9 +1,8 @@
 package ru.senina.itmo.lab6.commands;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
 import java.util.List;
@@ -30,12 +29,10 @@ public class PrintDescendingCommand extends CommandWithoutArgs {
     @Override
     protected String doRun() {
         try {
-            //TODO: что-то тут не так с переводом коллекции в список
-
             List<LabWork> list = collectionKeeper.getSortedList();
             if(list.size() != 0){
                 StringBuilder result = new StringBuilder();
-                result.append("You entered a command print_descending\":\n");
+                result.append("You entered a command print_descending:\n");
                 for(int i = list.size() - 1; i >= 0; i--){
                     result.append("Element ").append(i + 1).append(": \n").append(parser.fromElementToString(list.get(i))).append("\n");
                 }
@@ -43,7 +40,7 @@ public class PrintDescendingCommand extends CommandWithoutArgs {
             }else{
                 return "There is now elements in collection now.";
             }
-        }catch (ParsingException | JsonProcessingException e){
+        }catch (ParsingException e){
             return "Parsing in print_descending was failed";
         }
     }

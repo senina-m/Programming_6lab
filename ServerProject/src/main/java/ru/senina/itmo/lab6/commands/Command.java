@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.senina.itmo.lab6.CommandArgs;
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
-import ru.senina.itmo.lab6.parser.CollectionKeeperParser;
+import ru.senina.itmo.lab6.CollectionKeeperParser;
 
 /**
  * Parent of all ru.senina.itmo.lab6.commands classes
  */
 
-//TODO: Не добавить ли метод "очистить команду"
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class Command {
     private String[] args;

@@ -6,10 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
-//TODO: Обработать ошибки
+//TODO: Обработать ошибку когда ждёт сообщения, а оно не приходит
 public class ServerNetConnector {
     private ServerSocket serverSocket;
     private Socket clientSocket;
@@ -29,13 +29,19 @@ public class ServerNetConnector {
         }
     }
 
-    public String hasNextCommand() {
-        String line;
+    //TODO: подумать как быть, если таймаут истёк и нужен ли он вообще
+    public String nextCommand(int timeout) throws TimeoutException{
+        String line = null;
         try {
-            line  = in.readLine();
-        }catch (Exception e){
-            //TODO: обработаьь ошибки
-            System.out.println(e.toString());
+            while(line == null) {
+                line = in.readLine();
+                timeout--;
+                if(timeout<0){
+                    throw new TimeoutException("Reading time is out");
+                }
+            }
+        }catch (IOException e){
+            Logging.log(Level.WARNING, "Exception during nextCommand. " + e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
         Logging.log(Level.INFO, "Received message: '" + line + "'.");
@@ -43,7 +49,6 @@ public class ServerNetConnector {
     }
 
     public void sendResponse(String str){
-        byte[] byteMessage = str.getBytes(StandardCharsets.UTF_8);
         out.println(str);
         Logging.log(Level.INFO, "Message '" + str + "' was send.");
     }
@@ -56,12 +61,16 @@ public class ServerNetConnector {
             serverSocket.close();
             Logging.log(Level.INFO, "Connection was closed.");
         } catch (IOException e){
-            //TODO: обработаьь ошибки
-            throw new RuntimeException(e);
+            Logging.log(Level.WARNING, "Failed to stopConnection");
         }
     }
 
     public boolean checkIfConnectionClosed(){
         return serverSocket.isClosed();
+    }
+
+    public void reconnect(int port) {
+        stopConnection();
+        startConnection(port);
     }
 }

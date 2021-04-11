@@ -14,7 +14,7 @@ public class Logging {
         logger = Logger.getLogger(Logging.class.getName());
         String logFile = "myLogServer.txt";
         File f = new File(logFile);
-        f.createNewFile(); //TODO: Создать такой файл, если его не было - warning потом уберу
+        f.createNewFile();
         PrintWriter writer = new PrintWriter(f);
         writer.print("");
         writer.close();
