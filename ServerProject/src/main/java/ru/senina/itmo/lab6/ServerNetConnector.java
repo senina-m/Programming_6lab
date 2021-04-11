@@ -6,10 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
-//TODO: Обработать ошибку когда ждёт сообщения, а оно не приходит
 public class ServerNetConnector {
     private ServerSocket serverSocket;
     private Socket clientSocket;
@@ -29,7 +29,6 @@ public class ServerNetConnector {
         }
     }
 
-    //TODO: подумать как быть, если таймаут истёк и нужен ли он вообще
     public String nextCommand(int timeout) throws TimeoutException{
         String line = null;
         try {
@@ -40,7 +39,7 @@ public class ServerNetConnector {
                     throw new TimeoutException("Reading time is out");
                 }
             }
-        }catch (IOException e){
+        } catch (IOException e){
             Logging.log(Level.WARNING, "Exception during nextCommand. " + e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
@@ -67,10 +66,5 @@ public class ServerNetConnector {
 
     public boolean checkIfConnectionClosed(){
         return serverSocket.isClosed();
-    }
-
-    public void reconnect(int port) {
-        stopConnection();
-        startConnection(port);
     }
 }

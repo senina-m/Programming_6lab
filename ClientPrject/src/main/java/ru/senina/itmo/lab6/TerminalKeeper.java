@@ -5,6 +5,7 @@ import ru.senina.itmo.lab6.labwork.Coordinates;
 import ru.senina.itmo.lab6.labwork.Difficulty;
 import ru.senina.itmo.lab6.labwork.Discipline;
 import ru.senina.itmo.lab6.labwork.LabWork;
+import ru.senina.itmo.lab6.parser.Parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +16,12 @@ public class TerminalKeeper {
     private boolean systemInIsClosed = false;
     private Scanner in = new Scanner(System.in);
     private boolean script = false;
-    Map<String, String[]> commands;
-    ObjectMapper mapper;
+    private Map<String, String[]> commands;
+    private final String filename;
 
 
-    public TerminalKeeper(Map<String, String[]> commands, ObjectMapper mapper) {
-        this.commands = commands;
-        this.mapper = mapper;
+    public TerminalKeeper(String filename) {
+        this.filename = filename;
     }
 
     public CommandArgs readNextCommand() {
@@ -167,7 +167,15 @@ public class TerminalKeeper {
     }
 
     public void printResponse(CommandResponse response) {
-        //TODO: проверка на правильность порядка ответов
-        System.out.println(response.getResponse());
+        if(response.getCommandName().equals("exit")){
+            Parser.writeStringToFile(filename, response.getResponse());
+            System.out.println("Collection was saved to file. Program will exit!");
+        }else {
+            System.out.println(response.getResponse());
+        }
+    }
+
+    public void setCommands(Map<String, String[]> commandsWithArgs) {
+        this.commands = commandsWithArgs;
     }
 }

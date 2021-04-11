@@ -11,12 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 
-//TODO: Обработать ошибки
+
 public class ClientNetConnector {
-    //TODO: передавать как-то не хардкодить разобраться с хостами
     private SocketChannel serverSocketChannel;
     private Selector selector;
-    private final boolean debug = false;
+    private final boolean debug = true;
 
     public void startConnection(String host, int serverPort) {
         try {
@@ -50,9 +49,9 @@ public class ClientNetConnector {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e.toString());
-            //TODO: Обработать ошибку
-            throw new RuntimeException(e);
+            if (debug) {
+                System.out.println("DEBUG: Exception in connecting " + e.getLocalizedMessage());
+            }
         }
     }
 
@@ -86,9 +85,9 @@ public class ClientNetConnector {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e.toString());
-            //TODO: Обработать ошибку
-            throw new RuntimeException(e);
+            if (debug) {
+                System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
+            }
         }
     }
 
@@ -131,8 +130,10 @@ public class ClientNetConnector {
                 }
             }
         } catch (IOException e) {
-            //TODO: Обработать ошибку
-            throw new RuntimeException(e);
+            if (debug) {
+                System.out.println("DEBUG: Exception in sending a message " + e.getLocalizedMessage());
+            }
+            return null;
         }
     }
 
@@ -143,8 +144,9 @@ public class ClientNetConnector {
                 System.out.println("DEBUG: Connection is closed!");
             }
         } catch (IOException e) {
-            //TODO: Обработать ошибку
-            throw new RuntimeException(e);
+            if (debug) {
+                System.out.println("DEBUG: Exception in closing connection " + e.getLocalizedMessage());
+            }
         }
     }
 }

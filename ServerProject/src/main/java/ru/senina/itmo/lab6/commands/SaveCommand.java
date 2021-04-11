@@ -2,6 +2,7 @@ package ru.senina.itmo.lab6.commands;
 
 import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
+import ru.senina.itmo.lab6.parser.Parser;
 
 /**
  * Command saves collection to file
@@ -10,7 +11,7 @@ import ru.senina.itmo.lab6.CollectionKeeperParser;
 public class SaveCommand extends CommandWithoutArgs {
     private ICollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
-    private String filename;
+    private final String filename;
 
     public SaveCommand(String filename) {
         super("save", "save collection to file");
@@ -27,15 +28,7 @@ public class SaveCommand extends CommandWithoutArgs {
 
     @Override
     protected String doRun() {
-        parser.writeStringToFile(filename, parser.fromObjectToString(collectionKeeper));
+        Parser.writeStringToFile(filename, parser.fromObjectToString(collectionKeeper));
         return "Collection was successfully saved to " + filename + " file.";
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
     }
 }

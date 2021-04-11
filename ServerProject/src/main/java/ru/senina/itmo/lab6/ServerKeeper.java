@@ -31,66 +31,10 @@ public class ServerKeeper {
      */
     public void start() {
         Logging.log(Level.INFO, "Keeper was started.");
-
-        //TODO: try_with_resources
-        try {
-            //TODO: проверить что там с файлом
-            Map<String, Command> commandMap = createCommandMap();
-            SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(commandMap));
-            commandMap.put("create_collection", new CreateCollectionCommand());
-
-            //TODO метод чтобы менять после запуска
-            int serverPort = 8181;
-            netConnector.startConnection(serverPort);
-            String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
-            netConnector.sendResponse(commandsSetString);
-            Logging.log(Level.INFO, "Initial commands set was sent to client.");
-
-            while (true) {
-                try {
-                    String strCommand = netConnector.nextCommand(2000);
-                if (strCommand != null) {
-                    CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
-                    Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
-                    Command command = commandMap.get(commandArgs.getCommandName());
-                    command.setArgs(commandArgs);
-                    if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
-                        CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
-                        if (annotation.collectionKeeper()) {
-                            command.setCollectionKeeper(collectionKeeper);
-                        }
-                        if (annotation.parser()) {
-                            command.setParser(collectionKeeperParser);
-                        }
-                        if (annotation.element()) {
-                            //TODO: Check that element isn't null (have i do it here?)
-                            command.setElement(commandArgs.getElement());
-                        }
-                    }
-                    String commandResult = command.run();
-                    Logging.log(Level.INFO, "Command " + command.getName() + " (" + command.getNumber() + ") was executed without errors.");
-                    //stop connection and wait for new client if this is answering too long or has disconnected
-                    if (netConnector.checkIfConnectionClosed()) {
-                        netConnector.stopConnection();
-                        netConnector.startConnection(serverPort);
-                        continue;
-                    }
-                    netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
-                    Logging.log(Level.INFO, "Response to command " + command.getName() + " (" + command.getNumber() + ") was sent.");
-                }
-                }catch (TimeoutException e){
-                    netConnector.reconnect(serverPort);
-                }
-            }
-            //TODO: Check other exceptions
-        } catch (FileAccessException | InvalidArgumentsException e) {
-            netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(-1, e.getClass().getName(), "Server fail. Sorry, service is no more available.")));
-            Logging.log(Level.WARNING, e.getLocalizedMessage());
-        } finally {
-            netConnector.stopConnection();
+        int serverPort = 8181;
+        while (true) {
+            newClient(serverPort);
         }
-        Logging.log(Level.INFO, "System exit.");
-        System.exit(-1);
     }
 
     private Map<String, Command> createCommandMap() {
@@ -129,5 +73,64 @@ public class ServerKeeper {
             }
         }
         return commandsArgsMap;
+    }
+
+    private void newClient(int serverPort){
+
+        //TODO: try_with_resources
+        try {
+            Map<String, Command> commandMap = createCommandMap();
+            SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(commandMap));
+            commandMap.put("create_collection", new CreateCollectionCommand());
+
+            netConnector.startConnection(serverPort);
+            String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
+            netConnector.sendResponse(commandsSetString);
+            Logging.log(Level.INFO, "Initial commands set was sent to client.");
+            boolean working = true;
+            while (working) {
+                try {
+                    String strCommand = netConnector.nextCommand(2000);
+                    if (strCommand != null) {
+                        CommandArgs commandArgs = commandJsonParser.fromStringToObject(strCommand);
+                        Logging.log(Level.INFO, "New command " + commandArgs.getCommandName() + " (" + commandArgs.getNumber() + ") was read.");
+                        Command command = commandMap.get(commandArgs.getCommandName());
+                        command.setArgs(commandArgs);
+                        if (command.getClass().isAnnotationPresent(CommandAnnotation.class)) {
+                            CommandAnnotation annotation = command.getClass().getAnnotation(CommandAnnotation.class);
+                            if (annotation.collectionKeeper()) {
+                                command.setCollectionKeeper(collectionKeeper);
+                            }
+                            if (annotation.parser()) {
+                                command.setParser(collectionKeeperParser);
+                            }
+                            if (annotation.element()) {
+                                //TODO: Check that element isn't null (have i do it here?)
+                                command.setElement(commandArgs.getElement());
+                            }
+                        }
+                        String commandResult = command.run();
+                        Logging.log(Level.INFO, "Command " + command.getName() + " (" + command.getNumber() + ") was executed without errors.");
+                        //stop connection and wait for new client if this is answering too long or has disconnected
+                        if (netConnector.checkIfConnectionClosed()) {
+                            netConnector.stopConnection();
+                            working = false;
+                        }
+                        netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(command.getNumber(), command.getName(), commandResult)));
+                        Logging.log(Level.INFO, "Response to command " + command.getName() + " (" + command.getNumber() + ") was sent.");
+                    }
+                } catch (TimeoutException e) {
+                    netConnector.stopConnection();
+                    working = false;
+                }
+            }
+        } catch (FileAccessException | InvalidArgumentsException e) {
+            netConnector.sendResponse(responseParser.fromObjectToString(new CommandResponse(-1, e.getClass().getName(), "Server fail. Sorry, service is no more available.")));
+            Logging.log(Level.WARNING, e.getLocalizedMessage());
+        } finally {
+            netConnector.stopConnection();
+        }
+        Logging.log(Level.INFO, "Exit from this client, because he disconnected!");
+
     }
 }

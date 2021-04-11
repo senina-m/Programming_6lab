@@ -22,10 +22,10 @@ public abstract class Parser<T> {
             StringBuilder resultString = new StringBuilder();
             File f = new File(filename);
             Scanner sc = new Scanner(f);
-            String line = sc.nextLine();
-            while (line != null) {
-                resultString.append(line);
+            String line;
+            while (sc.hasNextLine()) {
                 line = sc.nextLine();
+                resultString.append(line);
             }
             sc.close();
             return resultString.toString();
@@ -43,7 +43,8 @@ public abstract class Parser<T> {
     public static void writeStringToFile(String filename, String str) throws FileAccessException {
         Path path = Paths.get(filename);
         try {
-            Files.write(path, ("" + str).getBytes());
+            Files.write(path, ("").getBytes());
+            Files.write(path, (str).getBytes());
         } catch (IOException e) {
             checkRights(path);
         }

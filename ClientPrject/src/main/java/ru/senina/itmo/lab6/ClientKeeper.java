@@ -7,6 +7,7 @@ import ru.senina.itmo.lab6.parser.Parser;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.LinkedList;
+import java.util.Optional;
 
 /**
  * Class to deal with input and output and keep CollectionKeeper class instance.
@@ -48,25 +49,30 @@ public class ClientKeeper {
         //TODO метод чтобы менять после запуска
         int serverPort = 8181;
         netConnector.startConnection("localhost", serverPort);
-        String message = netConnector.receiveMessage();
-        SetOfCommands commandsMap = new JsonParser<>(objectMapper, SetOfCommands.class).fromStringToObject(message);
-        commandsMap.getCommandsWithArgs().put("execute_script", new String[]{""});
-        terminalKeeper = new TerminalKeeper(commandsMap.getCommandsWithArgs(), objectMapper);
-        newCommand(createCollectionCommand);
-        
+        terminalKeeper = new TerminalKeeper(filename);
+        try {
+            String message = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
+            SetOfCommands commandsMap = new JsonParser<>(objectMapper, SetOfCommands.class).fromStringToObject(message);
+            commandsMap.getCommandsWithArgs().put("execute_script", new String[]{""});
+            terminalKeeper.setCommands(commandsMap.getCommandsWithArgs());
+            newCommand(createCollectionCommand);
+        }catch (InvalidServerAnswer e){
+            terminalKeeper.printResponse(new CommandResponse(-1, "Exception in server answer: failed reading initial set of commands", "Sorry, server failed. Service is currently unavailable."));
+        }
         while (working) {
-            CommandArgs command = terminalKeeper.readNextCommand();
-            newCommand(command);
+            try {
+                CommandArgs command = terminalKeeper.readNextCommand();
+                newCommand(command);
+            }catch (InvalidServerAnswer e){
+                terminalKeeper.printResponse(new CommandResponse(-1, "Exception in server answer", "Sorry, server failed to process your command. Please, try to run it again."));
+            }
         }
         netConnector.stopConnection();
         System.exit(0);
     }
 
-    public void newCommand(CommandArgs command) {
+    public void newCommand(CommandArgs command) throws InvalidServerAnswer{
         switch (command.getCommandName()) {
-            case ("exit"):
-                working = false;
-                break;
             case ("execute_script"):
                 if (recursionLevel < 10) {
                     recursionLevel++;
@@ -85,11 +91,13 @@ public class ClientKeeper {
                     recursionLevel = 0;
                 }
                 break;
+            case ("exit"):
+                working = false;
             default:
                 command.setNumber(numberOfCommands++);
                 String message = commandArgsJsonParser.fromObjectToString(command);
                 netConnector.sendMessage(message);
-                String response = netConnector.receiveMessage();
+                String response = Optional.ofNullable(netConnector.receiveMessage()).orElseThrow(InvalidServerAnswer::new);
                 CommandResponse commandAnswer = responseParser.fromStringToObject(response);
                 terminalKeeper.printResponse(commandAnswer);
         }
