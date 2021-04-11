@@ -38,14 +38,14 @@ public class ServerNetConnector {
             System.out.println(e.toString());
             throw new RuntimeException(e);
         }
-        Logging.log(Level.INFO, "Received message: " + line);
+        Logging.log(Level.INFO, "Received message: '" + line + "'.");
         return line;
     }
 
     public void sendResponse(String str){
         byte[] byteMessage = str.getBytes(StandardCharsets.UTF_8);
         out.println(str);
-        Logging.log(Level.INFO, "Message length = " + byteMessage.length + " was send. Message:" + str);
+        Logging.log(Level.INFO, "Message '" + str + "' was send.");
     }
 
     public void stopConnection() {

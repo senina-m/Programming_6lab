@@ -16,7 +16,7 @@ public class ClientNetConnector {
     //TODO: передавать как-то не хардкодить разобраться с хостами
     private SocketChannel serverSocketChannel;
     private Selector selector;
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     public void startConnection(String host, int serverPort) {
         try {
@@ -61,7 +61,7 @@ public class ClientNetConnector {
         if (debug) {
             System.out.println("DEBUG: Sending of a message started!");
         }
-        byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = (msg + "\n").getBytes(StandardCharsets.UTF_8);
         try {
             ByteBuffer outBuffer = ByteBuffer.wrap(bytes);
             while (true) {
@@ -78,7 +78,7 @@ public class ClientNetConnector {
                         channel.write(outBuffer);
                         if (outBuffer.remaining() < 1) {
                             if (debug) {
-                                System.out.println("DEBUG: Writing is finished!");
+                                System.out.println("DEBUG: Writing is finished! Message:'" + msg + "' was sent!");
                             }
                             return;
                         }
@@ -121,25 +121,9 @@ public class ClientNetConnector {
                             message.append(new String(buffer.array(), 0, buffer.position()));
                             buffer.compact();
                         }
-//                        buffer.clear();
-//                        clientSocketChannel.read(buffer);
-//                        int len = buffer.getInt();
-//                        if (debug) {
-//                            System.out.println("DEBUG: Len of message is: " + len + "!");
-//                        }
-//                        while (buffer.position() < len + 4) {
-//                            clientSocketChannel.read(buffer);
-//                        }
-                        //IF DEBUG
-//                            System.out.print("DEBUG: array of read bytes: ");
-//                            for (int i = 3; i < buffer.position() - 4; i++) {
-//                                System.out.print(buffer.array()[i] + " ");
-//                            }
-//                            System.out.println();
-//                        }
-//                        return new String(buffer.array(), 4, buffer.position() - 4);
+
                         if (debug) {
-                            System.out.println("DEBUG: Reading is finished!");
+                            System.out.println("DEBUG: Reading is finished! Received message: '" + message.toString().trim() + "'.");
                         }
                         return message.toString();
                     }

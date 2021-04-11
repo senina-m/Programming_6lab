@@ -7,7 +7,6 @@ public class ServerTest {
         ServerNetConnector net = new ServerNetConnector();
         net.startConnection(8181);
         String str = net.hasNextCommand();
-        Logging.log(Level.INFO, str);
         net.sendResponse("abcdefghijkmnlop");
         net.stopConnection();
     }

@@ -19,10 +19,7 @@ import java.util.logging.Logger;
 public class ServerKeeper {
     Logger log = Logger.getLogger(ServerKeeper.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private String filename = "my_file.json";
     private final ServerNetConnector netConnector = new ServerNetConnector();
-    //TODO метод чтобы менять после запуска
-    private int serverPort = 8181;
     private final ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
     private final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, ICollectionKeeper.class);
     private final Parser<CommandResponse> responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
@@ -44,6 +41,8 @@ public class ServerKeeper {
             SetOfCommands setOfCommands = new SetOfCommands(createCommandsArgsMap(commandMap));
             commandMap.put("create_collection", new CreateCollectionCommand());
 
+            //TODO метод чтобы менять после запуска
+            int serverPort = 8181;
             netConnector.startConnection(serverPort);
             String commandsSetString = new JsonParser<>(objectMapper, SetOfCommands.class).fromObjectToString(setOfCommands);
             netConnector.sendResponse(commandsSetString);
@@ -89,6 +88,8 @@ public class ServerKeeper {
     }
 
     private Map<String, Command> createCommandMap() {
+        //TODO: decide what to do with filename variable
+        String filename = "my_file.json";
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("help", new HelpCommand(commandMap));
         commandMap.put("info", new InfoCommand());

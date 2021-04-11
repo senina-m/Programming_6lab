@@ -5,7 +5,7 @@ public class ClientTest {
         ClientNetConnector net = new ClientNetConnector();
         net.startConnection("localhost", 8181);
         net.sendMessage("abcdefghijkmnlop");
-        System.out.println(net.receiveMessage());
+        net.receiveMessage();
         net.stopConnection();
     }
 }
