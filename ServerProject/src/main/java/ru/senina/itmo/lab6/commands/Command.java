@@ -1,8 +1,8 @@
 package ru.senina.itmo.lab6.commands;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.CommandArgs;
-import ru.senina.itmo.lab6.ICollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
 
@@ -67,7 +67,7 @@ public abstract class Command {
     public void setElement(LabWork element) {
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
     }
 
     public void setParser(CollectionKeeperParser parser) {

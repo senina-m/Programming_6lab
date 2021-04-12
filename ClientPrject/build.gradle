@@ -31,7 +31,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': "ru.senina.itmo.lab6.Main"
+        attributes 'Main-Class': "ru.senina.itmo.lab6.ClientMain"
     }
 }
 

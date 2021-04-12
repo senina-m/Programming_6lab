@@ -1,18 +1,18 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 
 /**
  * Command clear collection - delete all elements
  */
 @CommandAnnotation(name = "clear", collectionKeeper = true)
 public class ClearCommand extends CommandWithoutArgs{
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     public ClearCommand() {
         super("clear", "clear collection");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

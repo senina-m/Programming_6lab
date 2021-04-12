@@ -1,6 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.Parser;
 
@@ -9,7 +9,7 @@ import ru.senina.itmo.lab6.parser.Parser;
  */
 @CommandAnnotation(name = "save", collectionKeeper = true, parser = true, filename = true)
 public class SaveCommand extends CommandWithoutArgs {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
     private final String filename;
 
@@ -18,7 +18,7 @@ public class SaveCommand extends CommandWithoutArgs {
         this.filename = filename;
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

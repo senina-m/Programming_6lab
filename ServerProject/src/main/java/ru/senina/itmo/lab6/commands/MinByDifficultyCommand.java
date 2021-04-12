@@ -1,7 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
@@ -10,7 +9,7 @@ import ru.senina.itmo.lab6.parser.ParsingException;
  */
 @CommandAnnotation(name = "min_by_difficulty", collectionKeeper = true, parser = true)
 public class MinByDifficultyCommand extends CommandWithoutArgs {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
 
     @Override
@@ -22,7 +21,7 @@ public class MinByDifficultyCommand extends CommandWithoutArgs {
         super("min_by_difficulty", "remove any object from the collection with the minimum difficulty value");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

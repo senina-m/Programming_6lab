@@ -32,7 +32,7 @@ public class ClientKeeper {
     /**
      * Method to start a new collection and System.in reader
      */
-    public void start() {
+    public void start(int serverPort) {
         CommandArgs createCollectionCommand = null;
         try {
             File f = new File(filename);
@@ -46,8 +46,6 @@ public class ClientKeeper {
             System.exit(0);
         }
 
-        //TODO метод чтобы менять после запуска
-        int serverPort = 8181;
         netConnector.startConnection("localhost", serverPort);
         terminalKeeper = new TerminalKeeper(filename);
         try {

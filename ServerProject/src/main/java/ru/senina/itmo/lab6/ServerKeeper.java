@@ -18,8 +18,8 @@ import java.util.logging.Level;
 public class ServerKeeper {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ServerNetConnector netConnector = new ServerNetConnector();
-    private final ICollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
-    private final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, ICollectionKeeper.class);
+    private CollectionKeeper collectionKeeper = new CollectionKeeper(new LinkedList<>());
+    private final CollectionKeeperParser collectionKeeperParser = new CollectionKeeperParser(objectMapper, CollectionKeeper.class);
     private final Parser<CommandResponse> responseParser = new JsonParser<>(objectMapper, CommandResponse.class);
     private final Parser<CommandArgs> commandJsonParser = new JsonParser<>(objectMapper, CommandArgs.class);
 
@@ -29,11 +29,11 @@ public class ServerKeeper {
     /**
      * Method to start a new collection and System.in reader
      */
-    public void start() {
+    public void start(int serverPort) {
         Logging.log(Level.INFO, "Keeper was started.");
-        int serverPort = 8181;
         while (true) {
             newClient(serverPort);
+            collectionKeeper = new CollectionKeeper(new LinkedList<>());
         }
     }
 

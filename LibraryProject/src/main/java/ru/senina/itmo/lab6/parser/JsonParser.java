@@ -40,6 +40,7 @@ public class JsonParser<T> extends Parser<T> {
         try {
             return objectMapper.readValue(json, classT);
         } catch (ParsingException | JsonProcessingException e) {
+            e.printStackTrace();
             throw new ParsingException("Something wrong with string while parsing in JsonParser<" + classT.toString() + ">.");
         }
     }

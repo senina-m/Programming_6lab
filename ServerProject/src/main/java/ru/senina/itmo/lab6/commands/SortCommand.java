@@ -1,19 +1,19 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 
 /**
  * Command sorts collection
  */
 @CommandAnnotation(name = "sort", collectionKeeper = true)
 public class SortCommand extends CommandWithoutArgs {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
 
     public SortCommand() {
         super("sort", "sort the collection in natural order");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

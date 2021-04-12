@@ -1,7 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 import ru.senina.itmo.lab6.labwork.LabWork;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
@@ -14,7 +13,7 @@ import java.util.List;
  */
 @CommandAnnotation(name = "filter_by_description", collectionKeeper = true, parser = true)
 public class FilterByDescriptionCommand extends Command {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private String description;
     private CollectionKeeperParser parser;
 
@@ -23,7 +22,7 @@ public class FilterByDescriptionCommand extends Command {
     }
 
     @Override
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -35,6 +34,7 @@ public class FilterByDescriptionCommand extends Command {
     @Override
     protected String doRun() {
         try {
+            collectionKeeper.sort();
             List<LabWork> resultElements = collectionKeeper.filterByDescription(description);
             if(resultElements.size() != 0){
                 StringBuilder result = new StringBuilder();

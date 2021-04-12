@@ -1,20 +1,20 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 
 /** * Command that removes element on given place in collection
  */
 @CommandAnnotation(name = "remove_at", collectionKeeper = true, index = true)
 public class RemoveAtCommand extends Command{
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private int index;
 
     public RemoveAtCommand() {
         super("remove_at index", "remove the element at the given collection position (index)");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

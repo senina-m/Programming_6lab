@@ -24,7 +24,8 @@ public class ServerNetConnector {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (IOException e){
-            //TODO: обработаьь ошибки UnknownHostException
+            //TODO: обработать ошибки UnknownHostException отдельно?
+            Logging.log(Level.WARNING, "Exception during starting connection. " + e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
     }

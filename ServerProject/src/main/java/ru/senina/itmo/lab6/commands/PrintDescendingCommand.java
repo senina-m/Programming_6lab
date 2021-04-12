@@ -1,6 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
@@ -12,13 +12,13 @@ import java.util.List;
  */
 @CommandAnnotation(name = "print_descending", collectionKeeper = true, parser = true)
 public class PrintDescendingCommand extends CommandWithoutArgs {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
 
     public PrintDescendingCommand() {
         super("print_descending", "display the elements of the collection in descending order");
     }
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

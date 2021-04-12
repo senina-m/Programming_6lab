@@ -1,19 +1,19 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 
 /**
  * Command prints information about the collection (type, initialization date, number of elements, etc.) to the standard output stream
  */
 @CommandAnnotation(name = "info", collectionKeeper = true)
 public class InfoCommand extends CommandWithoutArgs {
-    ICollectionKeeper collectionKeeper;
+    CollectionKeeper collectionKeeper;
 
     public InfoCommand() {
         super("info", "print information about the collection (type, initialization date, number of elements, etc.) to the standard output stream");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

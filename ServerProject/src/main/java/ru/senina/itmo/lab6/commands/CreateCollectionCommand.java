@@ -1,16 +1,13 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
-import ru.senina.itmo.lab6.InvalidArgumentsException;
-import ru.senina.itmo.lab6.Logging;
-import ru.senina.itmo.lab6.CollectionKeeperParser;
+import ru.senina.itmo.lab6.*;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
 import java.util.logging.Level;
 
 @CommandAnnotation(name = "create_collection", collectionKeeper = true, parser = true, filename = true)
 public class CreateCollectionCommand extends Command {
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
     private String collectionString;
 
@@ -27,7 +24,7 @@ public class CreateCollectionCommand extends Command {
     }
 
     @Override
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 

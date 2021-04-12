@@ -15,7 +15,7 @@ import java.util.Set;
 public class ClientNetConnector {
     private SocketChannel serverSocketChannel;
     private Selector selector;
-    private final boolean debug = true;
+    private final boolean debug = false;
 
     public void startConnection(String host, int serverPort) {
         try {

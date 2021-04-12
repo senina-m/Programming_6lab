@@ -1,7 +1,6 @@
 package ru.senina.itmo.lab6.labwork;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.senina.itmo.lab6.InvalidArgumentsException;
 
@@ -16,8 +15,8 @@ public class LabWork {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final java.time.LocalDateTime creationDate = java.time.LocalDateTime.now();
-    ; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    private Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
+    //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private final Long id = Math.abs((long) Objects.hash(creationDate)); //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным,
     // Значение этого поля должно генерироваться автоматически
 
     private String name; //Поле не может быть null, Строка не может быть пустой
@@ -29,6 +28,10 @@ public class LabWork {
     private Discipline discipline; //Поле не может быть null
 
     public LabWork() {
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {

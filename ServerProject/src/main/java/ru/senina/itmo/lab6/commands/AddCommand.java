@@ -1,6 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
 /**
@@ -8,7 +8,7 @@ import ru.senina.itmo.lab6.labwork.LabWork;
  */
 @CommandAnnotation(name = "add", element = true, collectionKeeper = true)
 public class AddCommand extends CommandWithoutArgs{
-    ICollectionKeeper collectionKeeper;
+    CollectionKeeper collectionKeeper;
     private LabWork element;
 
     public LabWork getElement() {
@@ -24,7 +24,7 @@ public class AddCommand extends CommandWithoutArgs{
         super("add {element}", "add new element to collection");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

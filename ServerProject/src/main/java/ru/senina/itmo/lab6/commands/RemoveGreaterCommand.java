@@ -1,6 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
 /**
@@ -8,14 +8,14 @@ import ru.senina.itmo.lab6.labwork.LabWork;
  */
 @CommandAnnotation(name = "remove_greater", element = true, collectionKeeper = true)
 public class RemoveGreaterCommand extends CommandWithoutArgs{
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private LabWork element;
 
     public RemoveGreaterCommand() {
         super("remove_greater {element}", "remove all items from the collection that are greater than the specified one");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper){
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper){
         this.collectionKeeper = collectionKeeper;
     }
 

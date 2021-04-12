@@ -1,6 +1,8 @@
 package ru.senina.itmo.lab6;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.senina.itmo.lab6.labwork.Discipline;
 import ru.senina.itmo.lab6.labwork.LabWork;
 
@@ -11,41 +13,25 @@ import java.util.stream.Collectors;
 /**
  * Class to keep collection's elements
  */
-public class CollectionKeeper extends ICollectionKeeper {
+public class CollectionKeeper{
 
+    @JsonCreator
+    public CollectionKeeper(LinkedList<LabWork> list) {
+        this.list = list;
+    }
+
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonIgnore
     private final Date time = new Date();
     @JsonIgnore
     private final Comparator comparator = new Comparator();
     private final LinkedList<LabWork> list;
 
-    @Override
-    public void setTime(Date time) {
-    }
-
-    @Override
-    @JsonIgnore
-    public void setMyListType(String myListType) {
-    }
-
-    public CollectionKeeper() {
-        this.list = new LinkedList<>();
-    }
-
-    /**
-     * @param list of collection's elements
-     */
-    public CollectionKeeper(LinkedList<LabWork> list) {
-        this.list = list;
-    }
-
-    @Override
     public LinkedList<LabWork> getList() {
         return list;
     }
 
 
-    @Override
     public void setList(LinkedList<LabWork> list) throws IllegalArgumentException {
         this.list.clear();
         this.list.addAll(list);
@@ -90,7 +76,7 @@ public class CollectionKeeper extends ICollectionKeeper {
      * @param element element to add
      * @return String result of method work. If it finished successful
      */
-    @Override
+
     public String add(LabWork element) {
         list.add(element);
         return "Element with id: " + element.getId() + " was successfully added.";
@@ -102,7 +88,7 @@ public class CollectionKeeper extends ICollectionKeeper {
      * @param id given id
      * @return String result of method work. If it finished successful
      */
-    @Override
+
     public String removeById(long id) {
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getId() == id) {
@@ -129,7 +115,7 @@ public class CollectionKeeper extends ICollectionKeeper {
      * @param index given index
      * @return String result of method work. If it finished successful
      */
-    @Override
+
     public String removeAt(int index) {
         try {
             long id = list.remove(index).getId();
@@ -155,7 +141,6 @@ public class CollectionKeeper extends ICollectionKeeper {
      * @param element given element
      * @return String result of method work. If it finished successful
      */
-    @Override
     public String removeGreater(LabWork element) {
         List<Integer> indexToDelete = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -195,7 +180,7 @@ public class CollectionKeeper extends ICollectionKeeper {
      * @param description given description
      * @return String result of method work. If it finished successful
      */
-    @Override
+
     public List<LabWork> filterByDescription(String description) {
         return list.stream()
                 .filter(e -> e.getDescription()
@@ -208,7 +193,7 @@ public class CollectionKeeper extends ICollectionKeeper {
      *
      * @return sorted list of LabWork objects
      */
-    @Override
+    @JsonIgnore
     public List<LabWork> getSortedList() {
         return list.stream()
                 .sorted(comparator)

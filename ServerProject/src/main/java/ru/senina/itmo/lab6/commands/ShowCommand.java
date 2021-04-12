@@ -1,6 +1,6 @@
 package ru.senina.itmo.lab6.commands;
 
-import ru.senina.itmo.lab6.ICollectionKeeper;
+import ru.senina.itmo.lab6.CollectionKeeper;
 import ru.senina.itmo.lab6.CollectionKeeperParser;
 import ru.senina.itmo.lab6.parser.ParsingException;
 
@@ -10,14 +10,14 @@ import ru.senina.itmo.lab6.parser.ParsingException;
 @CommandAnnotation(name = "show", collectionKeeper = true, parser = true)
 public class ShowCommand extends CommandWithoutArgs{
 
-    private ICollectionKeeper collectionKeeper;
+    private CollectionKeeper collectionKeeper;
     private CollectionKeeperParser parser;
 
     public ShowCommand() {
         super("show", "print to standard output all elements of the collection in string representation");
     }
 
-    public void setCollectionKeeper(ICollectionKeeper collectionKeeper) {
+    public void setCollectionKeeper(CollectionKeeper collectionKeeper) {
         this.collectionKeeper = collectionKeeper;
     }
 
@@ -29,6 +29,7 @@ public class ShowCommand extends CommandWithoutArgs{
     protected String doRun(){
         try {
             if(collectionKeeper.getAmountOfElements()!= 0) {
+                collectionKeeper.sort();
                 return parser.fromCollectionToStringElements(collectionKeeper);
             } else {
                 return "No elements in collection.";
